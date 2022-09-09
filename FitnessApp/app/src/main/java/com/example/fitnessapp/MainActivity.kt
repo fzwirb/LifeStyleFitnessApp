@@ -3,12 +3,14 @@ package com.example.fitnessapp
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import java.io.File
@@ -23,6 +25,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private var mButtonSubmit: Button? = null
     private var mButtonCamera: Button? = null
     private var mThumbnailImage: Bitmap? = null
+    var mIvThumbnail: ImageView? = null
+
 
     private var mDisplayIntent: Intent? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,8 +52,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     startActivity(mDisplayIntent)
 
                 }
-
-
                     R.id.pic_button -> {
 
                     //            The button press should open a camera
@@ -95,6 +97,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+        mIvThumbnail = findViewById<View>(R.id.profile_pic) as ImageView
+        val imagePath = file.absolutePath
+        val thumbnailImage = BitmapFactory.decodeFile(imagePath)
+        if (thumbnailImage != null) {
+            mIvThumbnail!!.setImageBitmap(thumbnailImage)
+        }
+
         return file.absolutePath
     }
 

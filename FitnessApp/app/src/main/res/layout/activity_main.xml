@@ -145,5 +145,37 @@
 
     </RelativeLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/row6"
+        android:layout_below="@+id/row5">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/linearlayout_bottom">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Picture Preview:" />
+            <ImageView
+                android:id="@+id/profile_pic"
+                android:layout_alignParentRight="true"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+
+                />
+
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+
+
 
 </RelativeLayout>
