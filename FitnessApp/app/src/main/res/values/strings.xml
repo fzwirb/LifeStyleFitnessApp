@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">FitnessApp</string>
+    <string name="greeting_text">Hello, new user!</string>
+    <string name="enter_name">Enter Name:</string>
+    <string name="enter_age">Enter Age:</string>
+    <string name="enter_weight">Enter Weight(in lbs)</string>
+    <string name="enter_height">Enter Weight(in inches)</string>
+    <string name="submit">Create Profile</string>
+    <string name="take_a_picture">Take Picture</string>
 </resources>
