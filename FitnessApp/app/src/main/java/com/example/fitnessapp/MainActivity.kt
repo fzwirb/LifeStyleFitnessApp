@@ -52,13 +52,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     startActivity(mDisplayIntent)
 
                 }
-                    R.id.pic_button -> {
+                R.id.pic_button -> {
 
                     //            The button press should open a camera
                     val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                     try {
                         cameraLauncher.launch(cameraIntent)
-                    } catch (ex: ActivityNotFoundException) {
+                    }
+                    catch (ex: ActivityNotFoundException) {
                         //Do something here
                     }
                 }
