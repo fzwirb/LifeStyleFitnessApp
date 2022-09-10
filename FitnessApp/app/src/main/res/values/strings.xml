@@ -7,4 +7,12 @@
     <string name="enter_height">Enter Weight(in inches)</string>
     <string name="submit">Create Profile</string>
     <string name="take_a_picture">Take Picture</string>
+    <string name="enter_country">Country:</string>
+    <string name="enter_city">City:</string>
+
+    <string name="enter_activity_lvl">Select Activity Level:</string>
+    <string name="select_sex">Sex:</string>
+
+
+
 </resources>

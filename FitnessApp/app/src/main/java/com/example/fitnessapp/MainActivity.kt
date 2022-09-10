@@ -9,29 +9,51 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainActivity : AppCompatActivity(), View.OnClickListener {
+class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     //Variables
 
     private var mButtonSubmit: Button? = null
     private var mButtonCamera: Button? = null
     private var mThumbnailImage: Bitmap? = null
+    private var mSpinner: Spinner? = null
     var mIvThumbnail: ImageView? = null
+
+    //Values for activity spinner
+    var act_vals = arrayOf<String>("1 (Never Active)", "2", "3", "4", "5", "6", "7", "8", "9", "10 (Always Active)");
 
 
     private var mDisplayIntent: Intent? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        //Get spinner
+        mSpinner = findViewById<View>(R.id.activity_spinner) as Spinner
+
+        mSpinner!!.onItemSelectedListener = this
+
+        // Create the instance of ArrayAdapter
+        val ad: ArrayAdapter<*> = ArrayAdapter<Any?>(
+            this,
+            android.R.layout.simple_spinner_item,
+            act_vals)
+
+        // set simple layout resource file
+        // for each item of spinner
+        ad.setDropDownViewResource(
+            android.R.layout.simple_spinner_dropdown_item)
+
+        // Set the ArrayAdapter (ad) data on the
+        // Spinner which binds data to spinner
+        mSpinner!!.adapter = ad
 
         //Get the buttons
         mButtonSubmit = findViewById<View>(R.id.button_submit) as Button
@@ -113,5 +135,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             val state = Environment.getExternalStorageState()
             return Environment.MEDIA_MOUNTED == state
         }
+
+    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+            // make toastof name of course
+            // which is selected in spinner
+            Toast.makeText(applicationContext, act_vals[p2], Toast.LENGTH_LONG).show()
+    }
+
+    override fun onNothingSelected(p0: AdapterView<*>?) {
+
+    }
 
 }

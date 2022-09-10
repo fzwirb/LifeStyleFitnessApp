@@ -22,6 +22,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
+                android:fontFamily="@font/oxygen"
                 android:text="@string/enter_name" />
 
             <EditText
@@ -53,6 +54,7 @@
             <EditText
                 android:id="@+id/age"
                 android:layout_width="0dp"
+                android:inputType="number"
                 android:layout_height="wrap_content"
                 android:layout_weight="2" />
 
@@ -80,6 +82,7 @@
             <EditText
                 android:id="@+id/weight"
                 android:layout_width="0dp"
+                android:inputType="number"
                 android:layout_height="wrap_content"
                 android:layout_weight="2" />
 
@@ -106,8 +109,121 @@
             <EditText
                 android:id="@+id/height"
                 android:layout_width="0dp"
+                android:inputType="number"
                 android:layout_height="wrap_content"
                 android:layout_weight="2" />
+
+        </LinearLayout>
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/row5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/row4">
+
+        <LinearLayout
+            android:id="@+id/linearlayout_data5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="@string/enter_country" />
+
+            <EditText
+                android:id="@+id/country"
+                android:layout_width="0dp"
+                android:inputType="textCapWords"
+                android:layout_height="wrap_content"
+                android:layout_weight="2" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="@string/enter_city" />
+            <EditText
+                android:id="@+id/city"
+                android:layout_width="0dp"
+                android:inputType="textCapWords"
+                android:layout_height="wrap_content"
+                android:layout_weight="2" />
+
+
+        </LinearLayout>
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/row6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/row5">
+
+        <LinearLayout
+            android:id="@+id/linearlayout_data6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="@string/enter_activity_lvl" />
+
+            <Spinner
+                android:layout_margin="8dp"
+                android:id="@+id/activity_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+
+        </LinearLayout>
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/row7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/row6">
+
+        <LinearLayout
+            android:id="@+id/linearlayout_data7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="@string/select_sex" />
+            <RadioGroup
+                android:id="@+id/sex"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Male"
+                    android:id="@+id/radioButton"
+                    android:layout_gravity="center_horizontal"
+                    android:checked="false"
+                     />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Female"
+                    android:id="@+id/radioButton2"
+                    android:layout_gravity="center_horizontal"
+                    android:checked="false"
+                    />
+
+            </RadioGroup>
+
+
 
         </LinearLayout>
     </RelativeLayout>
@@ -115,8 +231,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/row5"
-        android:layout_below="@+id/row4">
+        android:id="@+id/row8"
+        android:layout_below="@+id/row7">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -148,8 +264,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/row6"
-        android:layout_below="@+id/row5">
+        android:id="@+id/row9"
+        android:layout_below="@+id/row8">
 
         <LinearLayout
             android:layout_width="match_parent"
