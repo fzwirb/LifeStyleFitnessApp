@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
@@ -37,7 +38,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     private var mainEtHeight: EditText? = null;
     private var mainEtCountry: EditText? = null;
     private var mainEtCity: EditText? = null;
-    private var mainEtSex: RadioGroup? = null;
+    private var mainRgSex: RadioGroup? = null;
 
 
 
@@ -48,6 +49,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     private var lastName: String? = null
     private var age: Int? = null
     private var weight: Int? = null
+    private var height: Int? = null
     private var country: String? = null
     private var city: String? = null
     private var activityLvl: Int? = null
@@ -56,7 +58,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     var mIvThumbnail: ImageView? = null
 
     //Values for activity spinner
-    var act_vals = arrayOf<String>("1 (Never Active)", "2", "3", "4", "5", "6", "7", "8", "9", "10 (Always Active)");
+    private var act_vals = arrayOf<String>("1 (Never Active)", "2", "3", "4", "5", "6", "7", "8", "9", "10 (Always Active)");
 
 
     private var mDisplayIntent: Intent? = null
@@ -134,36 +136,89 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     private fun validateForm(): Boolean {
         //list to store all string to validate at once
         val l = arrayOf<String>()
+        val list: MutableList<String> = l.toMutableList()
 
         //name
         mainEtName = findViewById<View>(R.id.full_name) as EditText
+        mainEtAge = findViewById<View>(R.id.age) as EditText
+
         fullName = mainEtName!!.text.toString()
 
 
         if(TextUtils.isEmpty(fullName)){
-            Toast.makeText(this@MainActivity, "All fields must be filled!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@MainActivity, "Name was left blank!", Toast.LENGTH_SHORT).show()
             return false
         }
-        return true
-
 
 
         //Age
+        mainEtAge = findViewById<View>(R.id.age) as EditText
+        Log.d("age", mainEtAge!!.text.toString())
+        if(mainEtAge!!.text.toString().isNullOrEmpty()){
+            Toast.makeText(this@MainActivity, "Age was left blank!", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        age = Integer.parseInt(mainEtAge!!.text.toString())
+        list.add(age.toString())
 
         //Weight
-
+        mainEtWeight = findViewById<View>(R.id.weight) as EditText
+//        Log.d("age", mainEtAge!!.text.toString())
+        if(mainEtWeight!!.text.toString().isNullOrEmpty()){
+            Toast.makeText(this@MainActivity, "Weight was left blank!", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        weight = Integer.parseInt(mainEtWeight!!.text.toString())
+        list.add(weight.toString())
 
         //Height
-
+        mainEtHeight = findViewById<View>(R.id.height) as EditText
+        if(mainEtHeight!!.text.toString().isNullOrEmpty()){
+            Toast.makeText(this@MainActivity, "Height was left blank!", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        height = Integer.parseInt(mainEtHeight!!.text.toString())
+        list.add(height.toString())
 
         //Location
-
+        mainEtCountry = findViewById<View>(R.id.country) as EditText
+        country = mainEtCountry!!.text.toString()
+        if(country.isNullOrEmpty()){
+            Toast.makeText(this@MainActivity, "Country was left blank!", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        list.add(country!!)
+        mainEtCity = findViewById<View>(R.id.city) as EditText
+        city = mainEtCity!!.text.toString()
+        if(city.isNullOrEmpty()){
+            Toast.makeText(this@MainActivity, "City was left blank!", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        list.add(city!!)
 
         //activity lvl
 
+        mainActivitySpinner = findViewById<View>(R.id.activity_spinner) as Spinner
+        // add 1 as position starts at 0
+        activityLvl = mainActivitySpinner!!.getSelectedItemPosition() + 1
+        Log.d("ACTIVITY", activityLvl.toString())
+
 
         //Sex
+        mainRgSex = findViewById<View>(R.id.sex) as RadioGroup
+        var radioButtonID: Int? = mainRgSex!!.checkedRadioButtonId
+        Log.d("RADIO BUTTON ID", radioButtonID.toString())
+        var selectedButton: RadioButton? = radioButtonID?.let { findViewById(it) }
+        sex = selectedButton!!.text.toString()
+        Log.d("USER SEX: ", sex!!)
 
+        //check for image
+        if(mainThumbnailImage == null){
+            Toast.makeText(this@MainActivity, "Please select or upload an image!", Toast.LENGTH_SHORT).show()
+            return false
+
+        }
+        return true
     }
 
 
