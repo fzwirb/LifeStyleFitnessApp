@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.text.TextUtils
 import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,6 +16,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnItemSelectedListener {
 
@@ -94,19 +96,25 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         mDisplayIntent = Intent(this, HomeActivity::class.java)
     }
 
-    override fun onClick(p0: View?) {
-        if (p0 != null) {
-            when (p0.id) {
+    override fun onClick(createUserView: View?) {
+        if (createUserView != null) {
+            when (createUserView.id) {
                 R.id.button_submit -> {
 
 
-                    mainEtName = findViewById<View>(R.id.full_name) as EditText
-                    fullName = mainEtName!!.text.toString()
-                    checkIfBlank(fullName)
+
+                    var validated = validateForm()
+
+                    if(validated) {
+                        mDisplayIntent!!.putExtra("full_name", fullName)
+                        startActivity(mDisplayIntent)
+                    }
+                    else{
+                        return
+                    }
 
 
                     //start the new activity
-                    startActivity(mDisplayIntent)
                 }
                 R.id.pic_button -> {
 
@@ -123,10 +131,41 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         }
     }
 
-    private fun checkIfBlank(s: String) {
-        if(s?.is())
+    private fun validateForm(): Boolean {
+        //list to store all string to validate at once
+        val l = arrayOf<String>()
+
+        //name
+        mainEtName = findViewById<View>(R.id.full_name) as EditText
+        fullName = mainEtName!!.text.toString()
+
+
+        if(TextUtils.isEmpty(fullName)){
+            Toast.makeText(this@MainActivity, "All fields must be filled!", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        return true
+
+
+
+        //Age
+
+        //Weight
+
+
+        //Height
+
+
+        //Location
+
+
+        //activity lvl
+
+
+        //Sex
 
     }
+
 
     private var cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
@@ -187,3 +226,5 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     }
 
 }
+
+
