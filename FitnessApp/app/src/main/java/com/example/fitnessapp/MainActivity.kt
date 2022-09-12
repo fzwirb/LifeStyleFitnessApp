@@ -20,10 +20,37 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
 
     //Variables
 
-    private var mButtonSubmit: Button? = null
-    private var mButtonCamera: Button? = null
-    private var mThumbnailImage: Bitmap? = null
-    private var mSpinner: Spinner? = null
+    //In Kotlin, the type system distinguishes between references that can hold null
+    // (nullable references) and those that cannot (non-null references)
+    // by using the question mark (?).
+
+    //Ui elements
+    private var mainButtonSubmit: Button? = null
+    private var mainButtonCamera: Button? = null
+    private var mainThumbnailImage: Bitmap? = null
+    private var mainActivitySpinner: Spinner? = null
+    private var mainEtName: EditText? = null;
+    private var mainEtAge: EditText? = null;
+    private var mainEtWeight: EditText? = null;
+    private var mainEtHeight: EditText? = null;
+    private var mainEtCountry: EditText? = null;
+    private var mainEtCity: EditText? = null;
+    private var mainEtSex: RadioGroup? = null;
+
+
+
+
+    //Variables
+    private var fullName: String? = null
+    private var firstName: String? = null
+    private var lastName: String? = null
+    private var age: Int? = null
+    private var weight: Int? = null
+    private var country: String? = null
+    private var city: String? = null
+    private var activityLvl: Int? = null
+    private var sex: String? = null
+
     var mIvThumbnail: ImageView? = null
 
     //Values for activity spinner
@@ -36,9 +63,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         setContentView(R.layout.activity_main)
 
         //Get spinner
-        mSpinner = findViewById<View>(R.id.activity_spinner) as Spinner
+        mainActivitySpinner = findViewById<View>(R.id.activity_spinner) as Spinner
 
-        mSpinner!!.onItemSelectedListener = this
+        mainActivitySpinner!!.onItemSelectedListener = this
 
         // Create the instance of ArrayAdapter
         val ad: ArrayAdapter<*> = ArrayAdapter<Any?>(
@@ -53,15 +80,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
 
         // Set the ArrayAdapter (ad) data on the
         // Spinner which binds data to spinner
-        mSpinner!!.adapter = ad
+        mainActivitySpinner!!.adapter = ad
 
         //Get the buttons
-        mButtonSubmit = findViewById<View>(R.id.button_submit) as Button
-        mButtonCamera = findViewById<View>(R.id.pic_button) as Button
+        mainButtonSubmit = findViewById<View>(R.id.button_submit) as Button
+        mainButtonCamera = findViewById<View>(R.id.pic_button) as Button
 
         //Say that this class itself contains the listener.
-        mButtonSubmit!!.setOnClickListener(this)
-        mButtonCamera!!.setOnClickListener(this)
+        mainButtonSubmit!!.setOnClickListener(this)
+        mainButtonCamera!!.setOnClickListener(this)
 
         //Create the intent but don't start the activity yet
         mDisplayIntent = Intent(this, HomeActivity::class.java)
@@ -71,8 +98,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         if (p0 != null) {
             when (p0.id) {
                 R.id.button_submit -> {
-                    startActivity(mDisplayIntent)
 
+
+                    mainEtName = findViewById<View>(R.id.full_name) as EditText
+                    fullName = mainEtName!!.text.toString()
+                    checkIfBlank(fullName)
+
+
+                    //start the new activity
+                    startActivity(mDisplayIntent)
                 }
                 R.id.pic_button -> {
 
@@ -88,14 +122,20 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
             }
         }
     }
+
+    private fun checkIfBlank(s: String) {
+        if(s?.is())
+
+    }
+
     private var cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             val extras = result.data!!.extras
-            mThumbnailImage = extras!!["data"] as Bitmap?
+            mainThumbnailImage = extras!!["data"] as Bitmap?
 
             //Open a file and write to it
             if (isExternalStorageWritable) {
-                val filePathString = saveImage(mThumbnailImage)
+                val filePathString = saveImage(mainThumbnailImage)
                 mDisplayIntent!!.putExtra("imagePath", filePathString)
             } else {
                 Toast.makeText(this, "External storage not writable.", Toast.LENGTH_SHORT).show()
