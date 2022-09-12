@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.text.TextUtils
 import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,14 +17,42 @@ import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
+
 class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     //Variables
 
-    private var mButtonSubmit: Button? = null
-    private var mButtonCamera: Button? = null
-    private var mThumbnailImage: Bitmap? = null
-    private var mSpinner: Spinner? = null
+    //In Kotlin, the type system distinguishes between references that can hold null
+    // (nullable references) and those that cannot (non-null references)
+    // by using the question mark (?).
+
+    //Ui elements
+    private var mainButtonSubmit: Button? = null
+    private var mainButtonCamera: Button? = null
+    private var mainThumbnailImage: Bitmap? = null
+    private var mainActivitySpinner: Spinner? = null
+    private var mainEtName: EditText? = null;
+    private var mainEtAge: EditText? = null;
+    private var mainEtWeight: EditText? = null;
+    private var mainEtHeight: EditText? = null;
+    private var mainEtCountry: EditText? = null;
+    private var mainEtCity: EditText? = null;
+    private var mainEtSex: RadioGroup? = null;
+
+
+
+
+    //Variables
+    private var fullName: String? = null
+    private var firstName: String? = null
+    private var lastName: String? = null
+    private var age: Int? = null
+    private var weight: Int? = null
+    private var country: String? = null
+    private var city: String? = null
+    private var activityLvl: Int? = null
+    private var sex: String? = null
+
     var mIvThumbnail: ImageView? = null
 
     //Values for activity spinner
@@ -36,9 +65,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         setContentView(R.layout.activity_main)
 
         //Get spinner
-        mSpinner = findViewById<View>(R.id.activity_spinner) as Spinner
+        mainActivitySpinner = findViewById<View>(R.id.activity_spinner) as Spinner
 
-        mSpinner!!.onItemSelectedListener = this
+        mainActivitySpinner!!.onItemSelectedListener = this
 
         // Create the instance of ArrayAdapter
         val ad: ArrayAdapter<*> = ArrayAdapter<Any?>(
@@ -53,26 +82,39 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
 
         // Set the ArrayAdapter (ad) data on the
         // Spinner which binds data to spinner
-        mSpinner!!.adapter = ad
+        mainActivitySpinner!!.adapter = ad
 
         //Get the buttons
-        mButtonSubmit = findViewById<View>(R.id.button_submit) as Button
-        mButtonCamera = findViewById<View>(R.id.pic_button) as Button
+        mainButtonSubmit = findViewById<View>(R.id.button_submit) as Button
+        mainButtonCamera = findViewById<View>(R.id.pic_button) as Button
 
         //Say that this class itself contains the listener.
-        mButtonSubmit!!.setOnClickListener(this)
-        mButtonCamera!!.setOnClickListener(this)
+        mainButtonSubmit!!.setOnClickListener(this)
+        mainButtonCamera!!.setOnClickListener(this)
 
         //Create the intent but don't start the activity yet
         mDisplayIntent = Intent(this, HomeActivity::class.java)
     }
 
-    override fun onClick(p0: View?) {
-        if (p0 != null) {
-            when (p0.id) {
+    override fun onClick(createUserView: View?) {
+        if (createUserView != null) {
+            when (createUserView.id) {
                 R.id.button_submit -> {
-                    startActivity(mDisplayIntent)
 
+
+
+                    var validated = validateForm()
+
+                    if(validated) {
+                        mDisplayIntent!!.putExtra("full_name", fullName)
+                        startActivity(mDisplayIntent)
+                    }
+                    else{
+                        return
+                    }
+
+
+                    //start the new activity
                 }
                 R.id.pic_button -> {
 
@@ -88,14 +130,51 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
             }
         }
     }
+
+    private fun validateForm(): Boolean {
+        //list to store all string to validate at once
+        val l = arrayOf<String>()
+
+        //name
+        mainEtName = findViewById<View>(R.id.full_name) as EditText
+        fullName = mainEtName!!.text.toString()
+
+
+        if(TextUtils.isEmpty(fullName)){
+            Toast.makeText(this@MainActivity, "All fields must be filled!", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        return true
+
+
+
+        //Age
+
+        //Weight
+
+
+        //Height
+
+
+        //Location
+
+
+        //activity lvl
+
+
+        //Sex
+
+    }
+
+
     private var cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             val extras = result.data!!.extras
-            mThumbnailImage = extras!!["data"] as Bitmap?
+            mainThumbnailImage = extras!!["data"] as Bitmap?
 
             //Open a file and write to it
             if (isExternalStorageWritable) {
-                val filePathString = saveImage(mThumbnailImage)
+                val filePathString = saveImage(mainThumbnailImage)
                 mDisplayIntent!!.putExtra("imagePath", filePathString)
             } else {
                 Toast.makeText(this, "External storage not writable.", Toast.LENGTH_SHORT).show()
@@ -147,3 +226,5 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     }
 
 }
+
+
