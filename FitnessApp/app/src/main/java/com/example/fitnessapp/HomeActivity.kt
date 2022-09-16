@@ -4,16 +4,21 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 //https://stackoverflow.com/questions/50897540/how-do-i-implement-serializable-in-kotlin-so-it-also-works-in-java
 import java.io.Serializable
 
 class HomeActivity : AppCompatActivity() {
     var mIvThumbnail: ImageView? = null
     var homeNameTV: TextView? = null
+    private var hikeIntent: Intent? = null
+    lateinit var bottomNav : BottomNavigationView
     @RequiresApi(33)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +43,28 @@ class HomeActivity : AppCompatActivity() {
 
         var bmr: Double? = calculateBMR(receivedIntent)
 
+        bottomNav = findViewById(R.id.bottomNav)
+        bottomNav.selectedItemId = R.id.bottomNav
 
+
+        hikeIntent = Intent(this, HikesActivity::class.java)
+        hikeIntent!!.putExtra("user", user)
+        hikeIntent!!.putExtra("imagePath", imagePath)
+
+        bottomNav.setOnItemSelectedListener {
+            when (it.itemId) {
+                R.id.home -> {
+                    return@setOnItemSelectedListener true
+                }
+                R.id.hikes -> {
+                    startActivity(hikeIntent)
+                    return@setOnItemSelectedListener true
+                }
+                else -> {
+                    return@setOnItemSelectedListener true
+                }
+            }
+        }
     }
 
     private fun calculateBMR(i: Intent): Double {
