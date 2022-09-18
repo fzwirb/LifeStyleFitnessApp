@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat.startActivity
 import kotlin.math.roundToInt
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -24,7 +25,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
     var homeKCAL: TextView? = null
     private var hikeIntent: Intent? = null
     lateinit var bottomNav : BottomNavigationView
-    @RequiresApi(33)
 
     //weather stuff
     private var weatherButton: Button? = null
@@ -32,7 +32,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
     private var userCountry: String? = null
     private var userCity: String? = null
-
+    @RequiresApi(33)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -122,8 +122,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         var heightCM = u.height?.times(2.54)
         var weightKG = u.weight?.div(2.205)
 
-
-
         bmr = if(u.sex == "male" ){
             (66.47 + (13.75 * weightKG!!) + (5.003 * heightCM!!) - (6.755 * u.age!!))
 
@@ -133,7 +131,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
         return bmr
     }
-}
 
     override fun onClick(createWeatherView: View?) {
         if (createWeatherView != null) {
@@ -149,5 +146,4 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
-
 }
