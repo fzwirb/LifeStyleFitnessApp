@@ -47,4 +47,56 @@
               />
         </LinearLayout>
     </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/row1"
+        android:id="@+id/row3">
+
+        <LinearLayout
+            android:id="@+id/linearlayout_data3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="false"
+            android:orientation="horizontal"
+            android:layout_marginTop="40dp"
+            >
+
+
+            <TextView
+                android:id="@+id/bmr"
+                android:text="BRM"
+                android:textSize="40dp"
+                android:padding="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+
+        </LinearLayout>
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/row3"
+        android:id="@+id/row4">
+
+        <LinearLayout
+            android:id="@+id/linearlayout_data4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="false"
+            android:orientation="horizontal"
+            android:layout_marginTop="40dp"
+            >
+
+            <TextView
+                android:id="@+id/kcal"
+                android:text="KCAL"
+                android:textSize="40dp"
+                android:padding="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
+    </RelativeLayout>
 </RelativeLayout>

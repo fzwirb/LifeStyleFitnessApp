@@ -9,11 +9,16 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import kotlin.math.roundToInt
+
 //https://stackoverflow.com/questions/50897540/how-do-i-implement-serializable-in-kotlin-so-it-also-works-in-java
 
 class HomeActivity : AppCompatActivity() {
     var mIvThumbnail: ImageView? = null
     var homeNameTV: TextView? = null
+    var homeBMR: TextView? = null
+    var homeKCAL: TextView? = null
+
     @RequiresApi(33)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,8 +27,9 @@ class HomeActivity : AppCompatActivity() {
 
         //Get the image view
         mIvThumbnail = findViewById<View>(R.id.profile_pic) as ImageView
-
         homeNameTV = findViewById<View>(R.id.home_name) as TextView
+        homeBMR = findViewById<View>(R.id.bmr) as TextView
+        homeKCAL = findViewById<View>(R.id.kcal) as TextView
 
         val receivedIntent = intent
 
@@ -38,8 +44,11 @@ class HomeActivity : AppCompatActivity() {
 
         var bmr: Double? = calculateBMR(user)
         Log.d("BRM", bmr.toString())
+        homeBMR!!.text = ("BRM: " + bmr!!.roundToInt())
         var kcal: Double? = calculateKCAL(user, bmr )
         Log.d("KCAL/DAY", kcal.toString())
+        homeKCAL!!.text = ("KCAL/Per Day: : " + kcal!!.roundToInt())
+
 
     }
 
@@ -83,3 +92,5 @@ class HomeActivity : AppCompatActivity() {
         return bmr
     }
 }
+
+
