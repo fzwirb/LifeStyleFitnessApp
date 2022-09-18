@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     var mIvThumbnail: ImageView? = null
 
     //Values for activity spinner
-    private var act_vals = arrayOf<String>("1 (Never Active)", "2", "3", "4", "5", "6", "7", "8", "9", "10 (Always Active)");
+    private var act_vals = arrayOf<String>("Sedentary", "Lightly active", "Moderately active", "Very active", "Extra active")
 
 
     private var mDisplayIntent: Intent? = null
