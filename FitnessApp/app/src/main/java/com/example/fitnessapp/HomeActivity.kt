@@ -10,7 +10,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import kotlin.math.roundToInt
-
+import androidx.fragment.app.Fragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 //https://stackoverflow.com/questions/50897540/how-do-i-implement-serializable-in-kotlin-so-it-also-works-in-java
 
 class HomeActivity : AppCompatActivity() {
@@ -18,7 +19,8 @@ class HomeActivity : AppCompatActivity() {
     var homeNameTV: TextView? = null
     var homeBMR: TextView? = null
     var homeKCAL: TextView? = null
-
+    private var hikeIntent: Intent? = null
+    lateinit var bottomNav : BottomNavigationView
     @RequiresApi(33)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +51,28 @@ class HomeActivity : AppCompatActivity() {
         Log.d("KCAL/DAY", kcal.toString())
         homeKCAL!!.text = ("KCAL/Per Day: : " + kcal!!.roundToInt())
 
+        bottomNav = findViewById(R.id.bottomNav)
+        bottomNav.selectedItemId = R.id.bottomNav
 
+
+        hikeIntent = Intent(this, HikesActivity::class.java)
+        hikeIntent!!.putExtra("user", user)
+        hikeIntent!!.putExtra("imagePath", imagePath)
+
+        bottomNav.setOnItemSelectedListener {
+            when (it.itemId) {
+                R.id.home -> {
+                    return@setOnItemSelectedListener true
+                }
+                R.id.hikes -> {
+                    startActivity(hikeIntent)
+                    return@setOnItemSelectedListener true
+                }
+                else -> {
+                    return@setOnItemSelectedListener true
+                }
+            }
+        }
     }
 
     private fun calculateKCAL(user: User, bmr: Double?): Double? {

@@ -13,6 +13,8 @@
     <string name="enter_activity_lvl">Select Activity Level:</string>
     <string name="select_sex">Sex:</string>
 
+    <string name="home">Home</string>
+    <string name="hikes">Hikes</string>
 
 
 </resources>

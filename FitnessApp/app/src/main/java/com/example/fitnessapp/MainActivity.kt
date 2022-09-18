@@ -224,8 +224,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
 
             //Open a file and write to it
             if (isExternalStorageWritable) {
-                val filePathString = saveImage(mainThumbnailImage)
-                mDisplayIntent!!.putExtra("imagePath", filePathString)
+                val imagePath = saveImage(mainThumbnailImage)
+                mDisplayIntent!!.putExtra("imagePath", imagePath)
             } else {
                 Toast.makeText(this, "External storage not writable.", Toast.LENGTH_SHORT).show()
             }
