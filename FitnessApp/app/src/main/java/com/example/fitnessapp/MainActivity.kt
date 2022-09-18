@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import com.google.gson.Gson
 import com.example.fitnessapp.NetworkUtilities.buildURLFromString
 import com.example.fitnessapp.NetworkUtilities.getDataFromURL
@@ -20,13 +21,14 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
+import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
 
 
 class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnItemSelectedListener {
-
+    @RequiresApi(33)
     //Variables
 
     //In Kotlin, the type system distinguishes between references that can hold null
@@ -64,10 +66,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     var mIvThumbnail: ImageView? = null
 
     //Values for activity spinner
-    private var act_vals = arrayOf<String>("1 (Never Active)", "2", "3", "4", "5", "6", "7", "8", "9", "10 (Always Active)");
+    private var act_vals = arrayOf<String>("Sedentary", "Lightly active", "Moderately active", "Very active", "Extra active")
 
 
     private var mDisplayIntent: Intent? = null
+    @RequiresApi(33)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -112,6 +115,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
                     var validated = validateForm()
 
                     if(validated) {
+                        //send data to the new home activity
+                        val user = User( fullName, height, weight, age, activityLvl, country, city, sex)
+                        mDisplayIntent!!.putExtra("user", user)
                         mDisplayIntent!!.putExtra("full_name", fullName)
                         mDisplayIntent!!.putExtra("the_city", city)
                         mDisplayIntent!!.putExtra("the_country", country)
@@ -120,9 +126,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
                     else{
                         return
                     }
-
-
-                    //start the new activity
                 }
                 R.id.pic_button -> {
 
@@ -150,12 +153,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
 
         fullName = mainEtName!!.text.toString()
 
-
         if(TextUtils.isEmpty(fullName)){
             Toast.makeText(this@MainActivity, "Name was left blank!", Toast.LENGTH_SHORT).show()
             return false
         }
-
 
         //Age
         mainEtAge = findViewById<View>(R.id.age) as EditText
@@ -169,7 +170,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
 
         //Weight
         mainEtWeight = findViewById<View>(R.id.weight) as EditText
-//        Log.d("age", mainEtAge!!.text.toString())
         if(mainEtWeight!!.text.toString().isNullOrEmpty()){
             Toast.makeText(this@MainActivity, "Weight was left blank!", Toast.LENGTH_SHORT).show()
             return false
@@ -209,7 +209,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         activityLvl = mainActivitySpinner!!.getSelectedItemPosition() + 1
         Log.d("ACTIVITY", activityLvl.toString())
 
-
         //Sex
         mainRgSex = findViewById<View>(R.id.sex) as RadioGroup
         var radioButtonID: Int? = mainRgSex!!.checkedRadioButtonId
@@ -227,7 +226,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         return true
     }
 
-
     private var cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             val extras = result.data!!.extras
@@ -235,8 +233,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
 
             //Open a file and write to it
             if (isExternalStorageWritable) {
-                val filePathString = saveImage(mainThumbnailImage)
-                mDisplayIntent!!.putExtra("imagePath", filePathString)
+                val imagePath = saveImage(mainThumbnailImage)
+                mDisplayIntent!!.putExtra("imagePath", imagePath)
             } else {
                 Toast.makeText(this, "External storage not writable.", Toast.LENGTH_SHORT).show()
             }
@@ -266,7 +264,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         if (thumbnailImage != null) {
             mIvThumbnail!!.setImageBitmap(thumbnailImage)
         }
-
         return file.absolutePath
     }
 
@@ -277,7 +274,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-            // make toastof name of course
+            // make toast of name of course
             // which is selected in spinner
             Toast.makeText(applicationContext, act_vals[p2], Toast.LENGTH_LONG).show()
     }
@@ -285,7 +282,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     override fun onNothingSelected(p0: AdapterView<*>?) {
 
     }
-
 }
 
-
+data class User(
+    val fullName: String?,
+    val height: Int?,
+    val weight: Int?,
+    val age: Int?,
+    val activityLvl: Int?,
+    val country: String?,
+    val city: String?,
+    val sex: String?,
+) : Serializable {}
