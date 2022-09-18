@@ -12,8 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FitnessApp">
         <activity
-            android:name=".HikesActivity"
             android:name=".weatherActivity"
+            android:exported="false" />
+        <activity
+            android:name=".HikesActivity"
             android:exported="false" />
         <activity
             android:name=".HomeActivity"
