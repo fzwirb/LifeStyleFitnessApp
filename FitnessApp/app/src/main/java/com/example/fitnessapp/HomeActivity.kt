@@ -9,14 +9,16 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import kotlin.math.roundToInt
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 //https://stackoverflow.com/questions/50897540/how-do-i-implement-serializable-in-kotlin-so-it-also-works-in-java
-import java.io.Serializable
 
 class HomeActivity : AppCompatActivity() {
     var mIvThumbnail: ImageView? = null
     var homeNameTV: TextView? = null
+    var homeBMR: TextView? = null
+    var homeKCAL: TextView? = null
     private var hikeIntent: Intent? = null
     lateinit var bottomNav : BottomNavigationView
     @RequiresApi(33)
@@ -27,8 +29,9 @@ class HomeActivity : AppCompatActivity() {
 
         //Get the image view
         mIvThumbnail = findViewById<View>(R.id.profile_pic) as ImageView
-
         homeNameTV = findViewById<View>(R.id.home_name) as TextView
+        homeBMR = findViewById<View>(R.id.bmr) as TextView
+        homeKCAL = findViewById<View>(R.id.kcal) as TextView
 
         val receivedIntent = intent
 
@@ -41,7 +44,12 @@ class HomeActivity : AppCompatActivity() {
         }
         homeNameTV!!.text = ("Welcome " + user.fullName)
 
-        var bmr: Double? = calculateBMR(receivedIntent)
+        var bmr: Double? = calculateBMR(user)
+        Log.d("BRM", bmr.toString())
+        homeBMR!!.text = ("BRM: " + bmr!!.roundToInt())
+        var kcal: Double? = calculateKCAL(user, bmr )
+        Log.d("KCAL/DAY", kcal.toString())
+        homeKCAL!!.text = ("KCAL/Per Day: : " + kcal!!.roundToInt())
 
         bottomNav = findViewById(R.id.bottomNav)
         bottomNav.selectedItemId = R.id.bottomNav
@@ -67,14 +75,45 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun calculateBMR(i: Intent): Double {
-
-        //For men: 66.47 + (6.24 × weight in pounds) + (12.7 × height in inches) − (6.75 × age in years).
-        if(true == false ){
-
+    private fun calculateKCAL(user: User, bmr: Double?): Double? {
+        var actLvl = user.activityLvl
+        //marathon, or triathlon, etc.
+        when (actLvl) {
+            //Sedentary = BMR x 1.2 (little or no exercise, desk job)
+            1 -> return (bmr?.times(1.2))
+            //Lightly active = BMR x 1.375 (light exercise/ sports 1-3 days/week)
+            2 -> return (bmr?.times(1.375))
+            //Moderately active = BMR x 1.55 (moderate exercise/ sports 6-7 days/week)
+            3 -> return (bmr?.times(1.55))
+            //Very active = BMR x 1.725 (hard exercise every day, or exercising 2 xs/day)
+            4 -> return (bmr?.times(1.725))
+            //Extra active = BMR x 1.9 (hard exercise 2 or more times per day, or training for
+            5 -> return (bmr?.times(1.9))
         }
-        //For women: BMR = 65.51 + (4.35 * weight in pounds) + (4.7 * height in inches) - (4.7 * age in years)
+        //else
+        return null;
+    }
 
-        return 10.00
+    private fun calculateBMR(u: User): Double {
+        var bmr: Double?
+        var kcal: Double?
+        //BMR = 66.47 + ( 13.75 x weight in kg ) + ( 5.003 x height in cm ) - ( 6.755 x age in years )
+        //BMR = 655.1 + ( 9.563 x weight in kg ) + ( 1.850 x height in cm ) - ( 4.676 x age in years )
+
+        var heightCM = u.height?.times(2.54)
+        var weightKG = u.weight?.div(2.205)
+
+
+
+        bmr = if(u.sex == "male" ){
+            (66.47 + (13.75 * weightKG!!) + (5.003 * heightCM!!) - (6.755 * u.age!!))
+
+        } else{
+            (655.1 + (9.563  * weightKG!!) + (1.850 * heightCM!!) - (4.676 * u.age!!))
+        }
+
+        return bmr
     }
 }
+
+
