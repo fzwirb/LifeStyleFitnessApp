@@ -13,10 +13,16 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import com.google.gson.Gson
+import com.example.fitnessapp.NetworkUtilities.buildURLFromString
+import com.example.fitnessapp.NetworkUtilities.getDataFromURL
+import org.json.JSONArray
+import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.roundToInt
 
 
 class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnItemSelectedListener {
@@ -103,12 +109,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
             when (createUserView.id) {
                 R.id.button_submit -> {
 
-
-
                     var validated = validateForm()
 
                     if(validated) {
                         mDisplayIntent!!.putExtra("full_name", fullName)
+                        mDisplayIntent!!.putExtra("the_city", city)
+                        mDisplayIntent!!.putExtra("the_country", country)
                         startActivity(mDisplayIntent)
                     }
                     else{
