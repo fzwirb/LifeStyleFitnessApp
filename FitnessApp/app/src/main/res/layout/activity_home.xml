@@ -7,10 +7,11 @@
     tools:context=".HomeActivity"
     android:padding="16dp"
     >
+
     <RelativeLayout
+        android:id="@+id/row1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/row1">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:id="@+id/linearlayout_data"
@@ -27,11 +28,12 @@
                 />
         </LinearLayout>
     </RelativeLayout>
+
     <RelativeLayout
+        android:id="@+id/row2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/row1"
-        android:id="@+id/row2">
+        android:layout_below="@+id/row1">
 
         <LinearLayout
             android:id="@+id/linearlayout_data2"
@@ -43,8 +45,7 @@
             <TextView
                 android:id="@+id/home_name"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-              />
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </RelativeLayout>
     <RelativeLayout
@@ -115,4 +116,16 @@
         app:itemIconTint="@color/black"
         app:menu="@menu/navbar_menu"
         android:scrollIndicators="left"/>
+
+    <Button
+        android:id="@+id/weather_button"
+        android:layout_width="199dp"
+        android:layout_height="118dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="597dp"
+        android:text="Weather"
+        android:textSize="24sp" />
+
 </RelativeLayout>

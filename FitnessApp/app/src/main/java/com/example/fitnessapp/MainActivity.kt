@@ -14,11 +14,17 @@ import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import com.google.gson.Gson
+import com.example.fitnessapp.NetworkUtilities.buildURLFromString
+import com.example.fitnessapp.NetworkUtilities.getDataFromURL
+import org.json.JSONArray
+import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.roundToInt
 
 
 class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnItemSelectedListener {
@@ -112,6 +118,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
                         //send data to the new home activity
                         val user = User( fullName, height, weight, age, activityLvl, country, city, sex)
                         mDisplayIntent!!.putExtra("user", user)
+                        mDisplayIntent!!.putExtra("full_name", fullName)
+                        mDisplayIntent!!.putExtra("the_city", city)
+                        mDisplayIntent!!.putExtra("the_country", country)
                         startActivity(mDisplayIntent)
                     }
                     else{

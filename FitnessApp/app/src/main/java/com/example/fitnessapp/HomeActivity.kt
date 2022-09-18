@@ -1,11 +1,14 @@
 package com.example.fitnessapp
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.provider.MediaStore
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
@@ -14,7 +17,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 //https://stackoverflow.com/questions/50897540/how-do-i-implement-serializable-in-kotlin-so-it-also-works-in-java
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : AppCompatActivity(), View.OnClickListener {
     var mIvThumbnail: ImageView? = null
     var homeNameTV: TextView? = null
     var homeBMR: TextView? = null
@@ -22,6 +25,13 @@ class HomeActivity : AppCompatActivity() {
     private var hikeIntent: Intent? = null
     lateinit var bottomNav : BottomNavigationView
     @RequiresApi(33)
+
+    //weather stuff
+    private var weatherButton: Button? = null
+    private var wDisplayIntent: Intent? = null
+
+    private var userCountry: String? = null
+    private var userCity: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +46,15 @@ class HomeActivity : AppCompatActivity() {
         val receivedIntent = intent
 
         var user = receivedIntent.extras?.getSerializable("user") as User
+        //set up weather intent
+        wDisplayIntent = Intent(this, weatherActivity::class.java)
+
+        weatherButton = findViewById<View>(R.id.weather_button) as Button
+
+        weatherButton!!.setOnClickListener(this)
+
+        userCity = receivedIntent.getStringExtra("the_city")
+        userCountry = receivedIntent.getStringExtra("the_country")
 
         val imagePath = receivedIntent.getStringExtra("imagePath")
         val thumbnailImage = BitmapFactory.decodeFile(imagePath)
@@ -116,4 +135,19 @@ class HomeActivity : AppCompatActivity() {
     }
 }
 
+    override fun onClick(createWeatherView: View?) {
+        if (createWeatherView != null) {
+            when (createWeatherView.id) {
+                R.id.weather_button -> {
 
+                    wDisplayIntent!!.putExtra("the_city", userCity)
+                    wDisplayIntent!!.putExtra("the_country", userCountry)
+
+                    startActivity(wDisplayIntent)
+
+                }
+            }
+        }
+    }
+
+}
