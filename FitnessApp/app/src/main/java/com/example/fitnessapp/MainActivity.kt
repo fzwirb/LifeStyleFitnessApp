@@ -205,8 +205,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         //activity lvl
 
         mainActivitySpinner = findViewById<View>(R.id.activity_spinner) as Spinner
-        // add 1 as position starts at 0
-        activityLvl = mainActivitySpinner!!.getSelectedItemPosition() + 1
+        activityLvl = mainActivitySpinner!!.getSelectedItemPosition()
         Log.d("ACTIVITY", activityLvl.toString())
 
         //Sex

@@ -1,28 +1,23 @@
 package com.example.fitnessapp
 
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.provider.MediaStore
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat.startActivity
 import kotlin.math.roundToInt
-import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 //https://stackoverflow.com/questions/50897540/how-do-i-implement-serializable-in-kotlin-so-it-also-works-in-java
 
-class HomeActivity : AppCompatActivity(), View.OnClickListener {
+class HomeActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnItemSelectedListener {
     var mIvThumbnail: ImageView? = null
     var homeNameTV: TextView? = null
     var homeBMR: TextView? = null
     var homeKCAL: TextView? = null
+    var user: User? = null
     private var hikeIntent: Intent? = null
     lateinit var bottomNav : BottomNavigationView
 
@@ -32,6 +27,10 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
     private var userCountry: String? = null
     private var userCity: String? = null
+    //spinner
+    private var homeActivitySpinner: Spinner? = null
+    private var act_vals = arrayOf<String>("Sedentary", "Lightly active", "Moderately active", "Very active", "Extra active")
+    private var userActivityLvl: Int? = null
     @RequiresApi(33)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +44,10 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
         val receivedIntent = intent
 
-        var user = receivedIntent.extras?.getSerializable("user") as User
+        //assign serialized user to the user object member var
+        user = receivedIntent.extras?.getSerializable("user") as User
+        user!!.fullName?.let { Log.d("USER_TEST", it) }
+
         //set up weather intent
         wDisplayIntent = Intent(this, weatherActivity::class.java)
 
@@ -61,18 +63,33 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         if (thumbnailImage != null) {
             mIvThumbnail!!.setImageBitmap(thumbnailImage)
         }
-        homeNameTV!!.text = ("Welcome " + user.fullName)
+        homeNameTV!!.text = ("Welcome " + user!!.fullName)
+        updateBMR(user)
 
-        var bmr: Double? = calculateBMR(user)
-        Log.d("BRM", bmr.toString())
-        homeBMR!!.text = ("BRM: " + bmr!!.roundToInt())
-        var kcal: Double? = calculateKCAL(user, bmr )
-        Log.d("KCAL/DAY", kcal.toString())
-        homeKCAL!!.text = ("KCAL/Per Day: : " + kcal!!.roundToInt())
+        //spinner
+        userActivityLvl = user!!.activityLvl
+        homeActivitySpinner = findViewById<View>(R.id.activity_spinner) as Spinner
+
+        homeActivitySpinner!!.onItemSelectedListener = this
+
+        // Create the instance of ArrayAdapter
+        val ad: ArrayAdapter<*> = ArrayAdapter<Any?>(
+            this,
+            android.R.layout.simple_spinner_item,
+            act_vals)
+
+        // set simple layout resource file
+        // for each item of spinner
+        ad.setDropDownViewResource(
+            android.R.layout.simple_spinner_dropdown_item)
+
+        // Set the ArrayAdapter (ad) data on the
+        // Spinner which binds data to spinner
+        homeActivitySpinner!!.adapter = ad
+        user!!.activityLvl?.let { homeActivitySpinner!!.setSelection(it) }
 
         bottomNav = findViewById(R.id.bottomNav)
         bottomNav.selectedItemId = R.id.bottomNav
-
 
         hikeIntent = Intent(this, HikesActivity::class.java)
         hikeIntent!!.putExtra("user", user)
@@ -94,30 +111,35 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+
+    /**
+     * Helper method for calculateBRM that uses a when statement to calculate
+     * the kcal per day based on the activity level of the user
+     */
     private fun calculateKCAL(user: User, bmr: Double?): Double? {
         var actLvl = user.activityLvl
         //marathon, or triathlon, etc.
         when (actLvl) {
             //Sedentary = BMR x 1.2 (little or no exercise, desk job)
-            1 -> return (bmr?.times(1.2))
+            0 -> return (bmr?.times(1.2))
             //Lightly active = BMR x 1.375 (light exercise/ sports 1-3 days/week)
-            2 -> return (bmr?.times(1.375))
+            1 -> return (bmr?.times(1.375))
             //Moderately active = BMR x 1.55 (moderate exercise/ sports 6-7 days/week)
-            3 -> return (bmr?.times(1.55))
+            2 -> return (bmr?.times(1.55))
             //Very active = BMR x 1.725 (hard exercise every day, or exercising 2 xs/day)
-            4 -> return (bmr?.times(1.725))
+            3 -> return (bmr?.times(1.725))
             //Extra active = BMR x 1.9 (hard exercise 2 or more times per day, or training for
-            5 -> return (bmr?.times(1.9))
+            4 -> return (bmr?.times(1.9))
         }
         //else
         return null;
     }
 
+    /**
+     * Takes in the user object and calculates the BMR and KCAL based in the user data
+     */
     private fun calculateBMR(u: User): Double {
         var bmr: Double?
-        var kcal: Double?
-        //BMR = 66.47 + ( 13.75 x weight in kg ) + ( 5.003 x height in cm ) - ( 6.755 x age in years )
-        //BMR = 655.1 + ( 9.563 x weight in kg ) + ( 1.850 x height in cm ) - ( 4.676 x age in years )
 
         var heightCM = u.height?.times(2.54)
         var weightKG = u.weight?.div(2.205)
@@ -145,5 +167,32 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
         }
+    }
+
+     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+         //update user's activity lvl
+         user = user?.copy(activityLvl = homeActivitySpinner!!.selectedItemPosition)
+         Log.d("NEW_LVL", user?.activityLvl.toString())
+         updateBMR(user)
+
+    }
+
+    /**
+     * Driver method for computing and displaying the user's BMR and KCAL
+     * Called when activity is created and everytime onItemSelected is called
+     */
+    private fun updateBMR(u: User?) {
+        u!!.fullName?.let { Log.d("UPDATE_BMR", it) }
+        var bmr: Double? = calculateBMR(u)
+        Log.d("BRM", bmr.toString())
+        homeBMR!!.text = ("BRM: " + bmr!!.roundToInt())
+        var kcal: Double? = calculateKCAL(u, bmr )
+        Log.d("KCAL/DAY", kcal.toString())
+        homeKCAL!!.text = ("KCAL/Per Day: : " + kcal!!.roundToInt())
+
+    }
+
+    override fun onNothingSelected(p0: AdapterView<*>?) {
+        //nothing needed
     }
 }
