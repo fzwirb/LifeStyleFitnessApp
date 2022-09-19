@@ -184,7 +184,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     private fun updateBMR(u: User?) {
         u!!.fullName?.let { Log.d("UPDATE_BMR", it) }
         var bmr: Double? = calculateBMR(u)
-        Log.d("BRM", bmr.toString())
+        Log.d("BMR", bmr.toString())
         homeBMR!!.text = ("BRM: " + bmr!!.roundToInt())
         var kcal: Double? = calculateKCAL(u, bmr )
         Log.d("KCAL/DAY", kcal.toString())
