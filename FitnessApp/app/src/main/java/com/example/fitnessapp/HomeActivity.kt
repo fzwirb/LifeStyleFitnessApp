@@ -21,6 +21,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     private var hikeIntent: Intent? = null
     private var weatherIntent: Intent? = null
+    private var mainIntent: Intent? = null
     lateinit var bottomNav : BottomNavigationView
 
     private var userCountry: String? = null
@@ -80,6 +81,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         homeActivitySpinner!!.adapter = ad
         user!!.activityLvl?.let { homeActivitySpinner!!.setSelection(it) }
 
+        // Bottom Nav
         bottomNav = findViewById(R.id.bottomNav)
         bottomNav.selectedItemId = R.id.bottomNav
 
@@ -95,6 +97,12 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         weatherIntent!!.putExtra("the_city", userCity)
         weatherIntent!!.putExtra("the_country", userCountry)
 
+        mainIntent = Intent(this, MainActivity::class.java)
+        mainIntent!!.putExtra("user", user)
+        mainIntent!!.putExtra("imagePath", imagePath)
+        mainIntent!!.putExtra("the_city", userCity)
+        mainIntent!!.putExtra("the_country", userCountry)
+
         bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.home -> {
@@ -106,6 +114,10 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                 }
                 R.id.weather -> {
                     startActivity(weatherIntent)
+                    return@setOnItemSelectedListener true
+                }
+                R.id.user_settings -> {
+                    startActivity(mainIntent)
                     return@setOnItemSelectedListener true
                 }
                 else -> {

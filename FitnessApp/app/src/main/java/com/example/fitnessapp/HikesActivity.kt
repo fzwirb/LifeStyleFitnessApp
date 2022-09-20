@@ -15,18 +15,23 @@ class HikesActivity : AppCompatActivity() {
     lateinit var bottomNav : BottomNavigationView
     private var homeIntent: Intent? = null
     private var weatherIntent: Intent? = null
+    private var mainIntent: Intent? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_hikes)
 
-        bottomNav = findViewById(R.id.bottomNav)
-        bottomNav.selectedItemId = R.id.bottomNav
+
 
         val receivedIntent = intent
         var user = receivedIntent.extras?.getSerializable("user") as User
+
+        // bottom nav
         val imagePath = receivedIntent.getStringExtra("imagePath")
         val userCity = receivedIntent.getStringExtra("the_city")
         val userCountry = receivedIntent.getStringExtra("the_country")
+
+        bottomNav = findViewById(R.id.bottomNav)
+        bottomNav.selectedItemId = R.id.bottomNav
 
         homeIntent = Intent(this, HomeActivity::class.java)
         homeIntent!!.putExtra("user", user)
@@ -40,6 +45,12 @@ class HikesActivity : AppCompatActivity() {
         weatherIntent!!.putExtra("the_city", userCity)
         weatherIntent!!.putExtra("the_country", userCountry)
 
+        mainIntent = Intent(this, MainActivity::class.java)
+        mainIntent!!.putExtra("user", user)
+        mainIntent!!.putExtra("imagePath", imagePath)
+        mainIntent!!.putExtra("the_city", userCity)
+        mainIntent!!.putExtra("the_country", userCountry)
+
         bottomNav.setOnItemSelectedListener {
             Log.d("it.itemId: ", it.itemId.toString())
             when (it.itemId) {
@@ -52,6 +63,10 @@ class HikesActivity : AppCompatActivity() {
                 }
                 R.id.weather -> {
                     startActivity(weatherIntent)
+                    return@setOnItemSelectedListener true
+                }
+                R.id.user_settings -> {
+                    startActivity(mainIntent)
                     return@setOnItemSelectedListener true
                 }
                 else -> {
