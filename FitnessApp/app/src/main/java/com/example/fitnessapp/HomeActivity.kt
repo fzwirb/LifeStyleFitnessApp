@@ -117,6 +117,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     return@setOnItemSelectedListener true
                 }
                 R.id.user_settings -> {
+                    Log.d("HOME_ACT", "SENT MAIN INTENET")
                     startActivity(mainIntent)
                     return@setOnItemSelectedListener true
                 }
@@ -160,7 +161,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             var heightCM = u.height?.times(2.54)
             var weightKG = u.weight?.div(2.205)
 
-            bmr = if(u.sex == "male" ){
+            bmr = if(u.sex == "Male" ){
                 (66.47 + (13.75 * weightKG!!) + (5.003 * heightCM!!) - (6.755 * u.age!!))
 
             } else{
@@ -176,7 +177,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
      override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
          //update user's activity lvl
          user = user?.copy(activityLvl = homeActivitySpinner!!.selectedItemPosition)
-         Log.d("NEW_LVL", user?.activityLvl.toString())
+         Log.d("NEW_LVL", user!!.activityLvl.toString())
          updateBMR(user)
 
     }

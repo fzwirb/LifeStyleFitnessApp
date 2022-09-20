@@ -1,5 +1,6 @@
 package com.example.fitnessapp
 
+import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Bitmap
@@ -62,6 +63,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     private var city: String? = null
     private var activityLvl: Int? = null
     private var sex: String? = null
+    private var receivedIntent: Intent? = null
+    private var user: User? = null
+    private var imagePath: String? = null
+
 
     var mIvThumbnail: ImageView? = null
 
@@ -70,10 +75,27 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
 
 
     private var mDisplayIntent: Intent? = null
+    @SuppressLint("ResourceType")
     @RequiresApi(33)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        mIvThumbnail = findViewById<View>(R.id.profile_pic) as ImageView
+
+        mainEtName = findViewById<View>(R.id.full_name) as EditText
+        mainEtAge = findViewById<View>(R.id.age) as EditText
+        mainEtWeight = findViewById<View>(R.id.weight) as EditText
+        mainEtHeight = findViewById<View>(R.id.height) as EditText
+        mainEtCountry = findViewById<View>(R.id.country) as EditText
+        mainEtCity = findViewById<View>(R.id.city) as EditText
+        mainActivitySpinner = findViewById<View>(R.id.activity_spinner) as Spinner
+        mainRgSex = findViewById<View>(R.id.sex) as RadioGroup
+        if (intent!!.hasExtra("user")) {
+            Log.d("Intent", "HAS USER")
+            receivedIntent = intent
+            user = receivedIntent?.extras?.getSerializable("user") as User
+        }
+
 
         //Get spinner
         mainActivitySpinner = findViewById<View>(R.id.activity_spinner) as Spinner
@@ -84,12 +106,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         val ad: ArrayAdapter<*> = ArrayAdapter<Any?>(
             this,
             android.R.layout.simple_spinner_item,
-            act_vals)
+            act_vals
+        )
 
         // set simple layout resource file
         // for each item of spinner
         ad.setDropDownViewResource(
-            android.R.layout.simple_spinner_dropdown_item)
+            android.R.layout.simple_spinner_dropdown_item
+        )
 
         // Set the ArrayAdapter (ad) data on the
         // Spinner which binds data to spinner
@@ -105,6 +129,32 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
 
         //Create the intent but don't start the activity yet
         mDisplayIntent = Intent(this, HomeActivity::class.java)
+
+        if (user?.fullName != null) {
+            Log.d("IN_IF", "TRUE")
+            mainButtonSubmit!!.text = "Update"
+            mainEtName!!.setText(user!!.fullName)
+            mainEtAge!!.setText(user!!.age.toString())
+            mainEtHeight!!.setText(user!!.height.toString())
+            mainEtWeight!!.setText(user!!.weight.toString())
+            mainEtCity?.setText(user!!.city)
+            mainEtCountry?.setText(user!!.country)
+            Log.d("SEX", user!!.sex.toString())
+            if (user!!.sex == "Male") {
+                Log.d("SEX","MALE")
+                mainRgSex?.check(R.id.radioButton)
+
+            } else if(user!!.sex == "Female") {
+                Log.d("SEX","FEMALE")
+                mainRgSex?.check(R.id.radioButton2)
+            }
+            mainActivitySpinner!!.setSelection(user!!.activityLvl!!)
+            imagePath = receivedIntent?.getStringExtra("imagePath")
+            val thumbnailImage = BitmapFactory.decodeFile(imagePath)
+            if (thumbnailImage != null) {
+                mIvThumbnail!!.setImageBitmap(thumbnailImage)
+            }
+        }
     }
 
     override fun onClick(createUserView: View?) {
@@ -116,7 +166,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
 
                     if(validated) {
                         //send data to the new home activity
-                        val user = User( fullName, height, weight, age, activityLvl, country, city, sex)
+                        user = User( fullName, height, weight, age, activityLvl, country, city, sex)
+                        mDisplayIntent!!.putExtra("imagePath", imagePath)
                         mDisplayIntent!!.putExtra("user", user)
                         mDisplayIntent!!.putExtra("full_name", fullName)
                         mDisplayIntent!!.putExtra("the_city", city)
@@ -149,7 +200,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
 
         //name
         mainEtName = findViewById<View>(R.id.full_name) as EditText
-        mainEtAge = findViewById<View>(R.id.age) as EditText
 
         fullName = mainEtName!!.text.toString()
 
@@ -217,7 +267,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         Log.d("USER SEX: ", sex!!)
 
         //check for image
-        if(mainThumbnailImage == null){
+        if(mIvThumbnail == null){
             Toast.makeText(this@MainActivity, "Please select or upload an image!", Toast.LENGTH_SHORT).show()
             return false
 
@@ -232,7 +282,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
 
             //Open a file and write to it
             if (isExternalStorageWritable) {
-                val imagePath = saveImage(mainThumbnailImage)
+                imagePath = saveImage(mainThumbnailImage)
                 mDisplayIntent!!.putExtra("imagePath", imagePath)
             } else {
                 Toast.makeText(this, "External storage not writable.", Toast.LENGTH_SHORT).show()
@@ -257,8 +307,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        mIvThumbnail = findViewById<View>(R.id.profile_pic) as ImageView
-        val imagePath = file.absolutePath
+        imagePath = file.absolutePath
         val thumbnailImage = BitmapFactory.decodeFile(imagePath)
         if (thumbnailImage != null) {
             mIvThumbnail!!.setImageBitmap(thumbnailImage)
