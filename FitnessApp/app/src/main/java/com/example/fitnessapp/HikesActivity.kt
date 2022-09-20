@@ -2,33 +2,40 @@ package com.example.fitnessapp
 
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class HikesActivity : AppCompatActivity() {
+class HikesActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var bottomNav : BottomNavigationView
     private var homeIntent: Intent? = null
     private var weatherIntent: Intent? = null
     private var mainIntent: Intent? = null
+
+    private var mButtonSubmit: Button? = null
+    lateinit var cityString: String
+    lateinit var countryString: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_hikes)
-
-
-
         val receivedIntent = intent
-        var user = receivedIntent.extras?.getSerializable("user") as User
 
         // bottom nav
+        var user = receivedIntent.extras?.getSerializable("user") as User
         val imagePath = receivedIntent.getStringExtra("imagePath")
         val userCity = receivedIntent.getStringExtra("the_city")
         val userCountry = receivedIntent.getStringExtra("the_country")
+        cityString = receivedIntent.getStringExtra("the_city").toString()
+        countryString = receivedIntent.getStringExtra("the_country").toString()
 
         bottomNav = findViewById(R.id.bottomNav)
         bottomNav.selectedItemId = R.id.bottomNav
@@ -72,6 +79,27 @@ class HikesActivity : AppCompatActivity() {
                 else -> {
                     return@setOnItemSelectedListener true
                 }
+            }
+        }
+
+        // Launch Hikes Button
+
+        //Get the button
+        mButtonSubmit = findViewById<View>(R.id.launch_hikes_button) as Button
+        mButtonSubmit!!.setOnClickListener(this)
+
+    }
+
+    override fun onClick(view: View) {
+        when (view.id) {
+            R.id.launch_hikes_button -> {
+                val searchString = "geo:0,0?q=$cityString+$countryString+hikes"
+                val searchUri = Uri.parse(searchString)
+                val mapIntent = Intent(Intent.ACTION_VIEW, searchUri)
+                mapIntent.setPackage("com.google.android.apps.maps")
+
+                startActivity(mapIntent)
+
             }
         }
     }

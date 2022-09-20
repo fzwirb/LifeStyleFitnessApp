@@ -39,6 +39,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
+        app:labelVisibilityMode="labeled"
         app:menu="@menu/navbar_menu" />
 
     <TextView
@@ -50,5 +51,14 @@
         android:layout_marginTop="177dp"
         android:text="Hikes"
         app:labelVisibilityMode="labeled"/>
+
+    <Button
+        android:id="@+id/launch_hikes_button"
+        android:layout_width="167dp"
+        android:layout_height="91dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="320dp"
+        android:text="Launch Hikes" />
 
 </RelativeLayout>
