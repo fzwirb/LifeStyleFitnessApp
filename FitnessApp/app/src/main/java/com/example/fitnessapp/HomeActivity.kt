@@ -21,6 +21,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     private var hikeIntent: Intent? = null
     private var weatherIntent: Intent? = null
+    private var mainIntent: Intent? = null
     lateinit var bottomNav : BottomNavigationView
 
     private var userCountry: String? = null
@@ -80,6 +81,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         homeActivitySpinner!!.adapter = ad
         user!!.activityLvl?.let { homeActivitySpinner!!.setSelection(it) }
 
+        // Bottom Nav
         bottomNav = findViewById(R.id.bottomNav)
         bottomNav.selectedItemId = R.id.bottomNav
 
@@ -95,6 +97,12 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         weatherIntent!!.putExtra("the_city", userCity)
         weatherIntent!!.putExtra("the_country", userCountry)
 
+        mainIntent = Intent(this, MainActivity::class.java)
+        mainIntent!!.putExtra("user", user)
+        mainIntent!!.putExtra("imagePath", imagePath)
+        mainIntent!!.putExtra("the_city", userCity)
+        mainIntent!!.putExtra("the_country", userCountry)
+
         bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.home -> {
@@ -108,6 +116,10 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     startActivity(weatherIntent)
                     return@setOnItemSelectedListener true
                 }
+                R.id.user_settings -> {
+                    startActivity(mainIntent)
+                    return@setOnItemSelectedListener true
+                }
                 else -> {
                     return@setOnItemSelectedListener true
                 }
@@ -115,48 +127,51 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         }
     }
 
-
-    /**
-     * Helper method for calculateBRM that uses a when statement to calculate
-     * the kcal per day based on the activity level of the user
-     */
-    private fun calculateKCAL(user: User, bmr: Double?): Double? {
-        var actLvl = user.activityLvl
-        //marathon, or triathlon, etc.
-        when (actLvl) {
-            //Sedentary = BMR x 1.2 (little or no exercise, desk job)
-            0 -> return (bmr?.times(1.2))
-            //Lightly active = BMR x 1.375 (light exercise/ sports 1-3 days/week)
-            1 -> return (bmr?.times(1.375))
-            //Moderately active = BMR x 1.55 (moderate exercise/ sports 6-7 days/week)
-            2 -> return (bmr?.times(1.55))
-            //Very active = BMR x 1.725 (hard exercise every day, or exercising 2 xs/day)
-            3 -> return (bmr?.times(1.725))
-            //Extra active = BMR x 1.9 (hard exercise 2 or more times per day, or training for
-            4 -> return (bmr?.times(1.9))
-        }
-        //else
-        return null;
-    }
-
-    /**
-     * Takes in the user object and calculates the BMR and KCAL based in the user data
-     */
-    private fun calculateBMR(u: User): Double {
-        var bmr: Double?
-
-        var heightCM = u.height?.times(2.54)
-        var weightKG = u.weight?.div(2.205)
-
-        bmr = if(u.sex == "male" ){
-            (66.47 + (13.75 * weightKG!!) + (5.003 * heightCM!!) - (6.755 * u.age!!))
-
-        } else{
-            (655.1 + (9.563  * weightKG!!) + (1.850 * heightCM!!) - (4.676 * u.age!!))
+    companion object {
+        /**
+         * Helper method for calculateBRM that uses a when statement to calculate
+         * the kcal per day based on the activity level of the user
+         */
+        fun calculateKCAL(user: User, bmr: Double?): Double? {
+            var actLvl = user.activityLvl
+            //marathon, or triathlon, etc.
+            when (actLvl) {
+                //Sedentary = BMR x 1.2 (little or no exercise, desk job)
+                0 -> return (bmr?.times(1.2))
+                //Lightly active = BMR x 1.375 (light exercise/ sports 1-3 days/week)
+                1 -> return (bmr?.times(1.375))
+                //Moderately active = BMR x 1.55 (moderate exercise/ sports 6-7 days/week)
+                2 -> return (bmr?.times(1.55))
+                //Very active = BMR x 1.725 (hard exercise every day, or exercising 2 xs/day)
+                3 -> return (bmr?.times(1.725))
+                //Extra active = BMR x 1.9 (hard exercise 2 or more times per day, or training for
+                4 -> return (bmr?.times(1.9))
+            }
+            //else
+            return null;
         }
 
-        return bmr
+        /**
+         * Takes in the user object and calculates the BMR and KCAL based in the user data
+         */
+        fun calculateBMR(u: User): Double {
+            var bmr: Double?
+
+            var heightCM = u.height?.times(2.54)
+            var weightKG = u.weight?.div(2.205)
+
+            bmr = if(u.sex == "male" ){
+                (66.47 + (13.75 * weightKG!!) + (5.003 * heightCM!!) - (6.755 * u.age!!))
+
+            } else{
+                (655.1 + (9.563  * weightKG!!) + (1.850 * heightCM!!) - (4.676 * u.age!!))
+            }
+
+            return bmr
+        }
     }
+
+
 
      override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
          //update user's activity lvl

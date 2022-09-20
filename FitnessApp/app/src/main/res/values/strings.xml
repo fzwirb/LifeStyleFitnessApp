@@ -16,5 +16,6 @@
     <string name="home">Home</string>
     <string name="hikes">Hikes</string>
     <string name="weather">Weather</string>
+    <string name="user_settings">User Settings</string>
 
 </resources>

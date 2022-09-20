@@ -32,14 +32,15 @@
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="0dp"
+        android:scrollIndicators="left"
+        app:itemIconTint="@color/black"
+        app:itemTextColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:itemTextColor="@color/black"
-        app:itemIconTint="@color/black"
-        app:menu="@menu/navbar_menu"
-        android:scrollIndicators="left"/>
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/navbar_menu" />
 
     <TextView
         android:id="@+id/textView"
@@ -48,6 +49,16 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="177dp"
-        android:text="Hikes" />
+        android:text="Hikes"
+        app:labelVisibilityMode="labeled"/>
+
+    <Button
+        android:id="@+id/launch_hikes_button"
+        android:layout_width="167dp"
+        android:layout_height="91dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="320dp"
+        android:text="Launch Hikes" />
 
 </RelativeLayout>

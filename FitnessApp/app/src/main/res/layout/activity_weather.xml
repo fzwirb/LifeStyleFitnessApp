@@ -47,7 +47,8 @@
         app:itemTextColor="@color/black"
         app:itemIconTint="@color/black"
         app:menu="@menu/navbar_menu"
-        android:scrollIndicators="left"/>
+         android:scrollIndicators="left"
+        app:labelVisibilityMode="labeled"/>
 
     <TextView
         android:id="@+id/humidity_view"
@@ -84,5 +85,6 @@
         android:layout_marginBottom="94dp"
         android:textAlignment="center"
         android:textSize="60sp"
-        app:emojiCompatEnabled="true" />
+        app:emojiCompatEnabled="true" 
+
 </RelativeLayout>
