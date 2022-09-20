@@ -8,4 +8,8 @@
         android:id="@+id/hikes"
         android:icon="@drawable/ic_baseline_map_24"
         android:title="@string/hikes" />
+    <item
+        android:id="@+id/weather"
+        android:icon="@drawable/ic_baseline_wb_sunny_24"
+        android:title="@string/weather" />
 </menu>
