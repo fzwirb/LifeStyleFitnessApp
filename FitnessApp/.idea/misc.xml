@@ -4,9 +4,12 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/font/font_family_oxygen.xml" value="0.16197916666666667" />
+        <entry key="app/src/main/res/layout/activity_hikes.xml" value="0.26944444444444443" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.1805348714192708" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.375" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_weather.xml" value="0.26944444444444443" />
         <entry key="app/src/main/res/layout/weather_activity.xml" value="0.23385416666666667" />
+        <entry key="app/src/main/res/menu/navbar_menu.xml" value="0.36041666666666666" />
       </map>
     </option>
   </component>

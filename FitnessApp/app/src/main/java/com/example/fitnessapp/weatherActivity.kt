@@ -2,28 +2,22 @@ package com.example.fitnessapp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.os.Environment
-import android.provider.MediaStore
-import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.*
-import androidx.activity.result.contract.ActivityResultContracts
 import com.example.fitnessapp.NetworkUtilities.buildURLFromString
 import com.example.fitnessapp.NetworkUtilities.getDataFromURL
-import java.io.File
-import java.io.FileOutputStream
-import java.text.SimpleDateFormat
-import java.util.*
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.Gson
 import kotlin.math.roundToInt
 
 
 class weatherActivity : AppCompatActivity() {
+    lateinit var bottomNav : BottomNavigationView
+    private var homeIntent: Intent? = null
+    private var weatherIntent: Intent? = null
+    private var hikeIntent: Intent? = null
 
     private var userCountry: String? = null
     private var userCity: String? = null
@@ -34,12 +28,52 @@ class weatherActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.weather_activity)
+        setContentView(R.layout.activity_weather)
 
         val receivedIntent = intent
+        var user = receivedIntent.extras?.getSerializable("user") as User
+        val imagePath = receivedIntent.getStringExtra("imagePath")
+        val userCity = receivedIntent.getStringExtra("the_city")
+        val userCountry = receivedIntent.getStringExtra("the_country")
 
-        userCountry = receivedIntent.getStringExtra("the_country")
-        userCity = receivedIntent.getStringExtra("the_city")
+        homeIntent = Intent(this, HomeActivity::class.java)
+        homeIntent!!.putExtra("user", user)
+        homeIntent!!.putExtra("imagePath", imagePath)
+        homeIntent!!.putExtra("the_city", userCity)
+        homeIntent!!.putExtra("the_country", userCountry)
+
+        hikeIntent = Intent(this, HikesActivity::class.java)
+        hikeIntent!!.putExtra("user", user)
+        hikeIntent!!.putExtra("imagePath", imagePath)
+        hikeIntent!!.putExtra("the_city", userCity)
+        hikeIntent!!.putExtra("the_country", userCountry)
+
+        bottomNav = findViewById(R.id.bottomNav)
+        bottomNav.selectedItemId = R.id.bottomNav
+
+        bottomNav.setOnItemSelectedListener {
+            Log.d("it.itemId: ", it.itemId.toString())
+            when (it.itemId) {
+                R.id.home -> {
+                    startActivity(homeIntent)
+                    return@setOnItemSelectedListener true
+                }
+                R.id.hikes -> {
+                    startActivity(hikeIntent)
+                    return@setOnItemSelectedListener true
+                }
+                R.id.weather -> {
+                    return@setOnItemSelectedListener true
+                }
+                else -> {
+                    return@setOnItemSelectedListener true
+                }
+            }
+        }
+
+
+
+
 
         cityTextView = findViewById<View>(R.id.city_text_view) as TextView
 

@@ -12,18 +12,16 @@ import kotlin.math.roundToInt
 import com.google.android.material.bottomnavigation.BottomNavigationView
 //https://stackoverflow.com/questions/50897540/how-do-i-implement-serializable-in-kotlin-so-it-also-works-in-java
 
-class HomeActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnItemSelectedListener {
+class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     var mIvThumbnail: ImageView? = null
     var homeNameTV: TextView? = null
     var homeBMR: TextView? = null
     var homeKCAL: TextView? = null
     var user: User? = null
-    private var hikeIntent: Intent? = null
-    lateinit var bottomNav : BottomNavigationView
 
-    //weather stuff
-    private var weatherButton: Button? = null
-    private var wDisplayIntent: Intent? = null
+    private var hikeIntent: Intent? = null
+    private var weatherIntent: Intent? = null
+    lateinit var bottomNav : BottomNavigationView
 
     private var userCountry: String? = null
     private var userCity: String? = null
@@ -48,12 +46,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         user = receivedIntent.extras?.getSerializable("user") as User
         user!!.fullName?.let { Log.d("USER_TEST", it) }
 
-        //set up weather intent
-        wDisplayIntent = Intent(this, weatherActivity::class.java)
-
-        weatherButton = findViewById<View>(R.id.weather_button) as Button
-
-        weatherButton!!.setOnClickListener(this)
 
         userCity = receivedIntent.getStringExtra("the_city")
         userCountry = receivedIntent.getStringExtra("the_country")
@@ -94,6 +86,14 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         hikeIntent = Intent(this, HikesActivity::class.java)
         hikeIntent!!.putExtra("user", user)
         hikeIntent!!.putExtra("imagePath", imagePath)
+        hikeIntent!!.putExtra("the_city", userCity)
+        hikeIntent!!.putExtra("the_country", userCountry)
+
+        weatherIntent = Intent(this, weatherActivity::class.java)
+        weatherIntent!!.putExtra("user", user)
+        weatherIntent!!.putExtra("imagePath", imagePath)
+        weatherIntent!!.putExtra("the_city", userCity)
+        weatherIntent!!.putExtra("the_country", userCountry)
 
         bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
@@ -102,6 +102,10 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
                 }
                 R.id.hikes -> {
                     startActivity(hikeIntent)
+                    return@setOnItemSelectedListener true
+                }
+                R.id.weather -> {
+                    startActivity(weatherIntent)
                     return@setOnItemSelectedListener true
                 }
                 else -> {
@@ -152,21 +156,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         }
 
         return bmr
-    }
-
-    override fun onClick(createWeatherView: View?) {
-        if (createWeatherView != null) {
-            when (createWeatherView.id) {
-                R.id.weather_button -> {
-
-                    wDisplayIntent!!.putExtra("the_city", userCity)
-                    wDisplayIntent!!.putExtra("the_country", userCountry)
-
-                    startActivity(wDisplayIntent)
-
-                }
-            }
-        }
     }
 
      override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
