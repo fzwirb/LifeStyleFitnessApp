@@ -85,6 +85,6 @@
         android:layout_marginBottom="94dp"
         android:textAlignment="center"
         android:textSize="60sp"
-        app:emojiCompatEnabled="true" 
+        app:emojiCompatEnabled="true" />
 
 </RelativeLayout>
