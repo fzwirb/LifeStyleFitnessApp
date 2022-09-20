@@ -23,9 +23,14 @@ class weatherActivity : AppCompatActivity() {
     private var userCountry: String? = null
     private var userCity: String? = null
     private var userTemp: String? = null
+    private var emoji: String? = null
 
     var cityTextView: TextView? = null
     var tempTextView: TextView? = null
+    var weatherDescView: TextView? = null
+    var humidityView: TextView? = null
+    var emojiView: TextView? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,11 +44,12 @@ class weatherActivity : AppCompatActivity() {
 
 
 
-
-
         cityTextView = findViewById<View>(R.id.city_text_view) as TextView
-
         tempTextView = findViewById<View>(R.id.temp_text_view) as TextView
+
+        humidityView = findViewById<View>(R.id.humidity_view) as TextView
+        weatherDescView = findViewById<View>(R.id.weather_desc_view) as TextView
+        emojiView = findViewById<View>(R.id.emoji_view) as TextView
 
         //-----------------------------//
         val location = "Salt&Lake&City,us"
@@ -80,10 +86,38 @@ class weatherActivity : AppCompatActivity() {
 
                 userTemp = finalTempInF
 
+                val humidity = "Humidity: " + wdAlt.main.humidity.toString()
+                val weatherDesc = wdAlt.weather[0].description
+
                 Log.e("temp in F: ", finalTempInF)
 
                 cityTextView!!.text = userCity
                 tempTextView!!.text = userTemp
+
+                humidityView!!.text = humidity
+                weatherDescView!!.text = weatherDesc
+
+                //for emojis
+                if (weatherDesc.contains("clouds")) {
+                    emoji = "⛅"
+                }
+                else if ((weatherDesc.contains("rain")) or (weatherDesc.contains("drizzle"))) {
+                    emoji = "☔️"
+                }
+                else if (weatherDesc.contains("snow")) {
+                    emoji = "❄️"
+                }
+                else if (weatherDesc.contains("thunderstorm")) {
+                    emoji = "⛈"
+                }
+                else if (weatherDesc.contains("mist")) {
+                    emoji = "☁️"
+                }
+                else {
+                    emoji = "☀️"
+                }
+
+                emojiView!!.text = emoji
 
 
             } catch (e: Exception) {
@@ -108,6 +142,7 @@ class weatherActivity : AppCompatActivity() {
         hikeIntent!!.putExtra("imagePath", imagePath)
         hikeIntent!!.putExtra("the_city", userCity)
         hikeIntent!!.putExtra("the_country", userCountry)
+
 
         mainIntent = Intent(this, MainActivity::class.java)
         mainIntent!!.putExtra("user", user)
