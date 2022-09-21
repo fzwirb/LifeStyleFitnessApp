@@ -134,7 +134,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     // Companion object to allow for unit testing
     companion object {
         /**
-         * Helper method for calculateBRM that uses a when statement to calculate
+         * Helper method for calculateBMR that uses a when statement to calculate
          * the kcal per day based on the activity level of the user
          */
         fun calculateKCAL(user: User, bmr: Double?): Double? {
@@ -184,7 +184,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         u!!.fullName?.let { Log.d("UPDATE_BMR", it) }
         var bmr: Double? = calculateBMR(u)
         Log.d("BMR", bmr.toString())
-        homeBMR!!.text = ("BRM: " + bmr!!.roundToInt())
+        homeBMR!!.text = ("BMR: " + bmr!!.roundToInt())
         var kcal: Double? = calculateKCAL(u, bmr )
         Log.d("KCAL/DAY", kcal.toString())
         homeKCAL!!.text = ("KCAL/Per Day: : " + kcal!!.roundToInt())
