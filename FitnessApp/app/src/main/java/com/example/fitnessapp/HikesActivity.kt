@@ -1,18 +1,17 @@
 package com.example.fitnessapp
 
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+
+/**
+ * Activity that allows the user to search for hikes nearby them in the Google Maps app
+ */
 
 class HikesActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var bottomNav : BottomNavigationView
@@ -28,6 +27,10 @@ class HikesActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_hikes)
         val receivedIntent = intent
+
+        //Get the button and set listener to this
+        mButtonSubmit = findViewById<View>(R.id.launch_hikes_button) as Button
+        mButtonSubmit!!.setOnClickListener(this)
 
         // bottom nav
         var user = receivedIntent.extras?.getSerializable("user") as User
@@ -46,7 +49,7 @@ class HikesActivity : AppCompatActivity(), View.OnClickListener {
         homeIntent!!.putExtra("the_city", userCity)
         homeIntent!!.putExtra("the_country", userCountry)
 
-        weatherIntent = Intent(this, weatherActivity::class.java)
+        weatherIntent = Intent(this, WeatherActivity::class.java)
         weatherIntent!!.putExtra("user", user)
         weatherIntent!!.putExtra("imagePath", imagePath)
         weatherIntent!!.putExtra("the_city", userCity)
@@ -81,15 +84,10 @@ class HikesActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
         }
-
-        // Launch Hikes Button
-
-        //Get the button
-        mButtonSubmit = findViewById<View>(R.id.launch_hikes_button) as Button
-        mButtonSubmit!!.setOnClickListener(this)
-
     }
-
+    /**
+     * If the launch hikes button is pressed, open google maps and search the user's country and city
+     */
     override fun onClick(view: View) {
         when (view.id) {
             R.id.launch_hikes_button -> {
@@ -99,7 +97,6 @@ class HikesActivity : AppCompatActivity(), View.OnClickListener {
                 mapIntent.setPackage("com.google.android.apps.maps")
 
                 startActivity(mapIntent)
-
             }
         }
     }
