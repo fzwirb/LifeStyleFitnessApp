@@ -12,16 +12,16 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.Gson
 import kotlin.math.roundToInt
 
+/**
+ * Activity that displays the weather for the user's location
+ */
 
-class weatherActivity : AppCompatActivity() {
+class WeatherActivity : AppCompatActivity() {
     lateinit var bottomNav : BottomNavigationView
     private var homeIntent: Intent? = null
-    private var weatherIntent: Intent? = null
     private var hikeIntent: Intent? = null
     private var mainIntent: Intent? = null
 
-    private var userCountry: String? = null
-    private var userCity: String? = null
     private var userTemp: String? = null
     private var emoji: String? = null
 
@@ -31,36 +31,29 @@ class weatherActivity : AppCompatActivity() {
     var humidityView: TextView? = null
     var emojiView: TextView? = null
 
-
+    /**
+     * Function run on creation of the activity
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_weather)
 
+        // get the received intent and city and country
         val receivedIntent = intent
-        var user = receivedIntent.extras?.getSerializable("user") as User
-        val imagePath = receivedIntent.getStringExtra("imagePath")
         val userCity = receivedIntent.getStringExtra("the_city")
         val userCountry = receivedIntent.getStringExtra("the_country")
 
-
-
+        // get all text views to be populated
         cityTextView = findViewById<View>(R.id.city_text_view) as TextView
         tempTextView = findViewById<View>(R.id.temp_text_view) as TextView
-
         humidityView = findViewById<View>(R.id.humidity_view) as TextView
         weatherDescView = findViewById<View>(R.id.weather_desc_view) as TextView
         emojiView = findViewById<View>(R.id.emoji_view) as TextView
 
-        //-----------------------------//
-        val location = "Salt&Lake&City,us"
-
-        val testCountry = "US"
-        val testLoc = "Salt Lake City" //replace testLoc with city
-
-        val countryString = userCountry!!.lowercase() //replace testCountry with country
-        val cityString = userCity!!.replace(" ", "&") //replace testLoc with city
+        // set variables to query for the weather
+        val countryString = userCountry!!.lowercase()
+        val cityString = userCity!!.replace(" ", "&")
         val finalLocString = cityString + "," + countryString
-
         val weatherDataURL = buildURLFromString(finalLocString)
         var jsonWeatherData: String? = null
 
@@ -69,21 +62,13 @@ class weatherActivity : AppCompatActivity() {
                 assert(weatherDataURL != null)
                 Log.e("WEATHER", "requesting weather")
                 jsonWeatherData = getDataFromURL(weatherDataURL!!)
-                //runOnUiThread {
-//                Log.e("WEATHER", jsonWeatherData ?: "DIDN'T GET DATA!!!")
-                //}
                 val gson = Gson()
                 val wdAlt: WeatherDataClass = gson.fromJson(jsonWeatherData?: "", WeatherDataClass::class.java)
-//                Log.e("WEATHER", gson.toJson(wdAlt))
                 val weatherString = gson.toJson(wdAlt)
                 Log.e("WeatherString", weatherString)
 
-                Log.e("location!!!!: ", finalLocString )
-
                 val tempInF = ((1.8 * ((wdAlt.main.temp) - 273)) + 32).roundToInt()
-
                 val finalTempInF = tempInF.toString() + "°"
-
                 userTemp = finalTempInF
 
                 val humidity = "Humidity: " + wdAlt.main.humidity.toString()
@@ -116,18 +101,16 @@ class weatherActivity : AppCompatActivity() {
                 else {
                     emoji = "☀️"
                 }
-
                 emojiView!!.text = emoji
-
-
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }.start()
-        
 
+        // Bottom Navigation listener and intents
+        var user = receivedIntent.extras?.getSerializable("user") as User
+        val imagePath = receivedIntent.getStringExtra("imagePath")
 
-        // Bottom Nav
         bottomNav = findViewById(R.id.bottomNav)
         bottomNav.selectedItemId = R.id.bottomNav
 
@@ -142,7 +125,6 @@ class weatherActivity : AppCompatActivity() {
         hikeIntent!!.putExtra("imagePath", imagePath)
         hikeIntent!!.putExtra("the_city", userCity)
         hikeIntent!!.putExtra("the_country", userCountry)
-
 
         mainIntent = Intent(this, MainActivity::class.java)
         mainIntent!!.putExtra("user", user)

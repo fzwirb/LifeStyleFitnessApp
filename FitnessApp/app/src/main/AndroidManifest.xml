@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FitnessApp">
         <activity
-            android:name=".weatherActivity"
+            android:name=".WeatherActivity"
             android:exported="false" />
         <activity
             android:name=".HikesActivity"

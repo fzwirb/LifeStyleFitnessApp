@@ -12,6 +12,10 @@ import kotlin.math.roundToInt
 import com.google.android.material.bottomnavigation.BottomNavigationView
 //https://stackoverflow.com/questions/50897540/how-do-i-implement-serializable-in-kotlin-so-it-also-works-in-java
 
+/**
+ * Homepage activity that presents the user KCal and BMR
+ */
+
 class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     var mIvThumbnail: ImageView? = null
     var homeNameTV: TextView? = null
@@ -26,6 +30,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     private var userCountry: String? = null
     private var userCity: String? = null
+
     //spinner
     private var homeActivitySpinner: Spinner? = null
     private var act_vals = arrayOf<String>("Sedentary", "Lightly active", "Moderately active", "Very active", "Extra active")
@@ -46,7 +51,6 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         //assign serialized user to the user object member var
         user = receivedIntent.extras?.getSerializable("user") as User
         user!!.fullName?.let { Log.d("USER_TEST", it) }
-
 
         userCity = receivedIntent.getStringExtra("the_city")
         userCountry = receivedIntent.getStringExtra("the_country")
@@ -91,7 +95,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         hikeIntent!!.putExtra("the_city", userCity)
         hikeIntent!!.putExtra("the_country", userCountry)
 
-        weatherIntent = Intent(this, weatherActivity::class.java)
+        weatherIntent = Intent(this, WeatherActivity::class.java)
         weatherIntent!!.putExtra("user", user)
         weatherIntent!!.putExtra("imagePath", imagePath)
         weatherIntent!!.putExtra("the_city", userCity)
@@ -127,7 +131,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             }
         }
     }
-
+    // Companion object to allow for unit testing
     companion object {
         /**
          * Helper method for calculateBRM that uses a when statement to calculate
@@ -148,10 +152,8 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                 //Extra active = BMR x 1.9 (hard exercise 2 or more times per day, or training for
                 4 -> return (bmr?.times(1.9))
             }
-            //else
             return null;
         }
-
         /**
          * Takes in the user object and calculates the BMR and KCAL based in the user data
          */
@@ -160,28 +162,20 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
             var heightCM = u.height?.times(2.54)
             var weightKG = u.weight?.div(2.205)
-
             bmr = if(u.sex == "Male" ){
                 (66.47 + (13.75 * weightKG!!) + (5.003 * heightCM!!) - (6.755 * u.age!!))
-
             } else{
                 (655.1 + (9.563  * weightKG!!) + (1.850 * heightCM!!) - (4.676 * u.age!!))
             }
-
             return bmr
         }
     }
-
-
-
      override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
          //update user's activity lvl
          user = user?.copy(activityLvl = homeActivitySpinner!!.selectedItemPosition)
          Log.d("NEW_LVL", user!!.activityLvl.toString())
          updateBMR(user)
-
     }
-
     /**
      * Driver method for computing and displaying the user's BMR and KCAL
      * Called when activity is created and everytime onItemSelected is called
@@ -194,9 +188,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         var kcal: Double? = calculateKCAL(u, bmr )
         Log.d("KCAL/DAY", kcal.toString())
         homeKCAL!!.text = ("KCAL/Per Day: : " + kcal!!.roundToInt())
-
     }
-
     override fun onNothingSelected(p0: AdapterView<*>?) {
         //nothing needed
     }

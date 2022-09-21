@@ -20,14 +20,14 @@ import org.junit.runner.RunWith
 
 
 /**
- * Instrumented test, which will execute on an Android device.
- *
- * See [testing documentation](http://d.android.com/tools/testing).
+ * Tests the user interface to ensure the correct intents are being launched when the UI is navigated through
  */
 @RunWith(AndroidJUnit4::class)
 class InstrumentedTests {
+    // user used to test functionality
     private val user = User("test", 72, 190, 24, 0, "US", "Salt Lake City", "Male")
 
+    // create the ActivityScenario and intent to launch the activities for HikesActivity and MainActivity
     private lateinit var hikesScenario: ActivityScenario<HikesActivity>
     private val hikesIntent = Intent(ApplicationProvider.getApplicationContext(), HikesActivity::class.java).putExtra("user", user).putExtra("full_name", "test").putExtra("the_city", "SLC").putExtra("the_country", "US")
 
@@ -39,26 +39,35 @@ class InstrumentedTests {
     @get:Rule
     val mainRule = ActivityScenarioRule<MainActivity>(mainIntent)
 
+    /**
+     * Launch the intents
+     */
     @Before
     fun initialization(){
         hikesScenario = ActivityScenario.launch(hikesIntent)
         mainScenario = ActivityScenario.launch(mainIntent)
     }
-
+    /**
+     * Close the scenarios after testing
+     */
     @After
     fun cleanup() {
         hikesScenario.close()
         mainScenario.close()
     }
-
+    /**
+     * Tests that the camera is opened when clicking the pic_button element
+     */
     @Test
     fun testImageClick() {
         onView(withId(R.id.pic_button))
             .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
     }
-
+    /**
+     * Tests that the app context is loaded correctly
+     */
     @Test
-    fun useAppContext() {
+    fun testAppContext() {
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         assertEquals("com.example.fitnessapp", appContext.packageName)
     }

@@ -27,14 +27,12 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
 
+/**
+ * Activity that accepts or updates user information
+ */
 
 class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnItemSelectedListener {
     @RequiresApi(33)
-    //Variables
-
-    //In Kotlin, the type system distinguishes between references that can hold null
-    // (nullable references) and those that cannot (non-null references)
-    // by using the question mark (?).
 
     //Ui elements
     private var mainButtonSubmit: Button? = null
@@ -48,9 +46,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     private var mainEtCountry: EditText? = null;
     private var mainEtCity: EditText? = null;
     private var mainRgSex: RadioGroup? = null;
-
-
-
 
     //Variables
     private var fullName: String? = null
@@ -67,21 +62,23 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     private var user: User? = null
     private var imagePath: String? = null
 
-
     var mIvThumbnail: ImageView? = null
 
     //Values for activity spinner
     private var act_vals = arrayOf<String>("Sedentary", "Lightly active", "Moderately active", "Very active", "Extra active")
 
-
     private var mDisplayIntent: Intent? = null
-    @SuppressLint("ResourceType")
+    /**
+     * Functions executes on creation of the activity
+     */
     @RequiresApi(33)
+    @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        mIvThumbnail = findViewById<View>(R.id.profile_pic) as ImageView
 
+        // get various elements from layout
+        mIvThumbnail = findViewById<View>(R.id.profile_pic) as ImageView
         mainEtName = findViewById<View>(R.id.full_name) as EditText
         mainEtAge = findViewById<View>(R.id.age) as EditText
         mainEtWeight = findViewById<View>(R.id.weight) as EditText
@@ -90,16 +87,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         mainEtCity = findViewById<View>(R.id.city) as EditText
         mainActivitySpinner = findViewById<View>(R.id.activity_spinner) as Spinner
         mainRgSex = findViewById<View>(R.id.sex) as RadioGroup
+
+        // if the received intent has user object, set user to be the received user object
         if (intent!!.hasExtra("user")) {
             Log.d("Intent", "HAS USER")
             receivedIntent = intent
             user = receivedIntent?.extras?.getSerializable("user") as User
         }
 
-
-        //Get spinner
+        //Get spinner and set listener
         mainActivitySpinner = findViewById<View>(R.id.activity_spinner) as Spinner
-
         mainActivitySpinner!!.onItemSelectedListener = this
 
         // Create the instance of ArrayAdapter
@@ -130,8 +127,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         //Create the intent but don't start the activity yet
         mDisplayIntent = Intent(this, HomeActivity::class.java)
 
+        // if intent contains a user object, fill in the text fields with user data.
         if (user?.fullName != null) {
-            Log.d("IN_IF", "TRUE")
             mainButtonSubmit!!.text = "Update"
             mainEtName!!.setText(user!!.fullName)
             mainEtAge!!.setText(user!!.age.toString())
@@ -143,7 +140,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
             if (user!!.sex == "Male") {
                 Log.d("SEX","MALE")
                 mainRgSex?.check(R.id.radioButton)
-
             } else if(user!!.sex == "Female") {
                 Log.d("SEX","FEMALE")
                 mainRgSex?.check(R.id.radioButton2)
@@ -157,13 +153,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         }
     }
 
+    /**
+     * On activity click, if the click is on the createUserView, validate the form. If validated, start HomeActivity
+     * If pic button is pressed, launch camera
+     */
     override fun onClick(createUserView: View?) {
         if (createUserView != null) {
             when (createUserView.id) {
                 R.id.button_submit -> {
-
                     var validated = validateForm()
-
                     if(validated) {
                         //send data to the new home activity
                         user = User( fullName, height, weight, age, activityLvl, country, city, sex)
@@ -179,20 +177,21 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
                     }
                 }
                 R.id.pic_button -> {
-
-                    //            The button press should open a camera
                     val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                     try {
                         cameraLauncher.launch(cameraIntent)
                     }
-                    catch (ex: ActivityNotFoundException) {
-                        //Do something here
+                    catch (e: Exception) {
+                        e.printStackTrace()
                     }
                 }
             }
         }
     }
 
+    /**
+     * Validates whether the user input is acceptable. Returns boolean
+     */
     private fun validateForm(): Boolean {
         //list to store all string to validate at once
         val l = arrayOf<String>()
@@ -200,7 +199,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
 
         //name
         mainEtName = findViewById<View>(R.id.full_name) as EditText
-
         fullName = mainEtName!!.text.toString()
 
         if(TextUtils.isEmpty(fullName)){
@@ -253,7 +251,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         list.add(city!!)
 
         //activity lvl
-
         mainActivitySpinner = findViewById<View>(R.id.activity_spinner) as Spinner
         activityLvl = mainActivitySpinner!!.getSelectedItemPosition()
         Log.d("ACTIVITY", activityLvl.toString())
@@ -270,11 +267,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         if(mIvThumbnail == null){
             Toast.makeText(this@MainActivity, "Please select or upload an image!", Toast.LENGTH_SHORT).show()
             return false
-
         }
         return true
     }
 
+    /**
+     * Handle camera launch
+     */
     private var cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             val extras = result.data!!.extras
@@ -290,6 +289,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         }
     }
 
+    /**
+     * Save image from camera
+     */
     private fun saveImage(finalBitmap: Bitmap?): String {
         val root = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         val myDir = File("$root/saved_images")
@@ -314,24 +316,23 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         }
         return file.absolutePath
     }
-
+    // Boolean representing whether storage is writeable
     private val isExternalStorageWritable: Boolean
         get() {
             val state = Environment.getExternalStorageState()
             return Environment.MEDIA_MOUNTED == state
         }
-
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-            // make toast of name of course
-            // which is selected in spinner
+            // make toast of name which is selected in spinner
             Toast.makeText(applicationContext, act_vals[p2], Toast.LENGTH_LONG).show()
     }
-
     override fun onNothingSelected(p0: AdapterView<*>?) {
 
     }
 }
-
+/**
+ * Class representing user data
+ */
 data class User(
     val fullName: String?,
     val height: Int?,
