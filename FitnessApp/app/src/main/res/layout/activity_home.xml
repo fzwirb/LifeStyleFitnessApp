@@ -5,129 +5,116 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".HomeActivity"
-    android:padding="16dp"
-    >
-
-    <RelativeLayout
-        android:id="@+id/row1"
+    android:padding="16dp">
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:id="@+id/linearlayout_data"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/profile_pic"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-
-                />
-        </LinearLayout>
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/row2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/row1">
-
-        <LinearLayout
-            android:id="@+id/linearlayout_data2"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/home_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-    </RelativeLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/row1"
-        android:id="@+id/row3">
-
-        <LinearLayout
-            android:id="@+id/linearlayout_data3"
+        android:layout_height="match_parent" >
+        <RelativeLayout
+            android:id="@+id/form_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="false"
-            android:orientation="horizontal"
-            android:layout_marginTop="40dp"
-            >
-
-
-            <TextView
-                android:id="@+id/bmr"
-                android:text="BMR"
-                android:textSize="40dp"
-                android:padding="15dp"
-                android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:id="@+id/row1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:id="@+id/linearlayout_data"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:id="@+id/profile_pic"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"/>
+                </LinearLayout>
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/row2"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                />
-
-        </LinearLayout>
-    </RelativeLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/row3"
-        android:id="@+id/row4">
-
-        <LinearLayout
-            android:id="@+id/linearlayout_data4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="false"
-            android:orientation="horizontal"
-            android:layout_marginTop="40dp"
-            >
-
-            <TextView
-                android:id="@+id/kcal"
-                android:text="KCAL"
-                android:textSize="40dp"
-                android:padding="15dp"
-                android:layout_width="wrap_content"
+                android:layout_below="@+id/row1">
+                <LinearLayout
+                    android:id="@+id/linearlayout_data2"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/home_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                />
-        </LinearLayout>
-    </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/row5"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/row4">
-
-        <LinearLayout
-            android:id="@+id/linearlayout_data6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
+                android:layout_below="@+id/row1"
+                android:id="@+id/row3">
+                <LinearLayout
+                    android:id="@+id/linearlayout_data3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="false"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="40dp">
+                    <TextView
+                        android:id="@+id/bmr"
+                        android:text="BMR"
+                        android:textSize="40dp"
+                        android:padding="15dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:text="@string/enter_activity_lvl" />
+                android:layout_below="@+id/row3"
+                android:id="@+id/row4">
+                <LinearLayout
+                    android:id="@+id/linearlayout_data4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="false"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="40dp">
+                    <TextView
+                        android:id="@+id/kcal"
+                        android:text="KCAL"
+                        android:textSize="40dp"
+                        android:padding="15dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        />
+                </LinearLayout>
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/row5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/row4">
+                <LinearLayout
+                    android:id="@+id/linearlayout_data6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:text="@string/enter_activity_lvl" />
+                    <Spinner
+                        android:layout_margin="8dp"
+                        android:id="@+id/activity_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </RelativeLayout>
 
-            <Spinner
-                android:layout_margin="8dp"
-                android:id="@+id/activity_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-
-        </LinearLayout>
-    </RelativeLayout>
-
+        </RelativeLayout>
+    </ScrollView>
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
@@ -143,7 +130,4 @@
         app:menu="@menu/navbar_menu"
         android:scrollIndicators="left"
         app:labelVisibilityMode="labeled"/>
-
-
-
 </RelativeLayout>
