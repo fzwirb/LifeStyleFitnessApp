@@ -5,6 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".HikesActivity">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:id="@+id/form_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/launch_hikes_button"
+                android:layout_width="167dp"
+                android:layout_height="91dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="133dp"
+                android:layout_marginEnd="124dp"
+                android:text="Launch Hikes" />
+        </RelativeLayout>
+    </ScrollView>
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
@@ -20,12 +39,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:labelVisibilityMode="labeled"
         app:menu="@menu/navbar_menu" />
-    <Button
-        android:id="@+id/launch_hikes_button"
-        android:layout_width="167dp"
-        android:layout_height="91dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="320dp"
-        android:text="Launch Hikes" />
 </RelativeLayout>
