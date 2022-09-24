@@ -30,6 +30,7 @@
                         android:text="@string/enter_name" />
                     <EditText
                         android:id="@+id/full_name"
+                        android:hint="John Smith"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2" />
@@ -50,12 +51,11 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
                         android:text="@string/enter_age" />
-                    <EditText
-                        android:id="@+id/age"
-                        android:layout_width="0dp"
-                        android:inputType="number"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2" />
+                    <Spinner
+                        android:layout_margin="8dp"
+                        android:id="@+id/age_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
             </RelativeLayout>
             <RelativeLayout
@@ -73,12 +73,11 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
                         android:text="@string/enter_weight" />
-                    <EditText
-                        android:id="@+id/weight"
-                        android:layout_width="0dp"
-                        android:inputType="number"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2" />
+                    <Spinner
+                        android:layout_margin="8dp"
+                        android:id="@+id/weight_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
             </RelativeLayout>
             <RelativeLayout
@@ -96,12 +95,11 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
                         android:text="@string/enter_height" />
-                    <EditText
-                        android:id="@+id/height"
-                        android:layout_width="0dp"
-                        android:inputType="number"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2" />
+                    <Spinner
+                        android:layout_margin="8dp"
+                        android:id="@+id/height_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
             </RelativeLayout>
             <RelativeLayout
@@ -121,6 +119,7 @@
                         android:text="@string/enter_country" />
                     <EditText
                         android:id="@+id/country"
+                        android:hint="US"
                         android:layout_width="0dp"
                         android:inputType="textCapWords"
                         android:layout_height="wrap_content"
@@ -134,6 +133,7 @@
                         android:id="@+id/city"
                         android:layout_width="0dp"
                         android:inputType="textCapWords"
+                        android:hint="Salt Lake City"
                         android:layout_height="wrap_content"
                         android:layout_weight="2" />
                 </LinearLayout>
