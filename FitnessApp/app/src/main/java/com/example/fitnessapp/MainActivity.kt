@@ -39,13 +39,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     private var mainButtonCamera: Button? = null
     private var mainThumbnailImage: Bitmap? = null
     private var mainActivitySpinner: Spinner? = null
-    private var mainEtName: EditText? = null;
-    private var mainEtAge: EditText? = null;
-    private var mainEtWeight: EditText? = null;
-    private var mainEtHeight: EditText? = null;
-    private var mainEtCountry: EditText? = null;
-    private var mainEtCity: EditText? = null;
-    private var mainRgSex: RadioGroup? = null;
+    private var weightSpinner: Spinner? = null
+    private var heightSpinner: Spinner? = null
+    private var ageSpinner: Spinner? = null
+
+    private var mainEtName: EditText? = null
+    private var mainEtAge: EditText? = null
+    private var mainEtWeight: EditText? = null
+    private var mainEtHeight: EditText? = null
+    private var mainEtCountry: EditText? = null
+    private var mainEtCity: EditText? = null
+    private var mainRgSex: RadioGroup? = null
 
     //Variables
     private var fullName: String? = null
@@ -65,9 +69,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     var mIvThumbnail: ImageView? = null
 
     //Values for activity spinner
-    private var act_vals = arrayOf<String>("Sedentary", "Lightly active", "Moderately active", "Very active", "Extra active")
+    private var act_vals = arrayOf<String>(
+        "Sedentary",
+        "Lightly active",
+        "Moderately active",
+        "Very active",
+        "Extra active"
+    )
+    private var agesList: MutableList<Int> = ArrayList()
+    private var weightsList: MutableList<Int> = ArrayList()
+    private var heightList: MutableList<Int> = ArrayList()
 
     private var mDisplayIntent: Intent? = null
+
     /**
      * Functions executes on creation of the activity
      */
@@ -80,13 +94,28 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         // get various elements from layout
         mIvThumbnail = findViewById<View>(R.id.profile_pic) as ImageView
         mainEtName = findViewById<View>(R.id.full_name) as EditText
-        mainEtAge = findViewById<View>(R.id.age) as EditText
-        mainEtWeight = findViewById<View>(R.id.weight) as EditText
-        mainEtHeight = findViewById<View>(R.id.height) as EditText
+//        mainEtAge = findViewById<View>(R.id.age) as EditText
+//        mainEtWeight = findViewById<View>(R.id.weight) as EditText
+//        mainEtHeight = findViewById<View>(R.id.height) as EditText
         mainEtCountry = findViewById<View>(R.id.country) as EditText
         mainEtCity = findViewById<View>(R.id.city) as EditText
         mainActivitySpinner = findViewById<View>(R.id.activity_spinner) as Spinner
+        weightSpinner = findViewById<View>(R.id.weight_spinner) as Spinner
+        heightSpinner = findViewById<View>(R.id.height_spinner) as Spinner
+        ageSpinner = findViewById<View>(R.id.age_spinner) as Spinner
+
+
         mainRgSex = findViewById<View>(R.id.sex) as RadioGroup
+
+        var i: Int? = 0
+        var j: Int? = 50
+        while (i!! < 100) {
+            agesList.add(i, i)
+            heightList.add(i, i)
+            weightsList.add(i , j!!)
+            i += 1
+            j += 5
+        }
 
         // if the received intent has user object, set user to be the received user object
         if (intent!!.hasExtra("user")) {
@@ -95,7 +124,48 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
             user = receivedIntent?.extras?.getSerializable("user") as User
         }
 
-        //Get spinner and set listener
+        initSpinners()
+
+        //Get the buttons
+        mainButtonSubmit = findViewById<View>(R.id.button_submit) as Button
+        mainButtonCamera = findViewById<View>(R.id.pic_button) as Button
+
+        //Say that this class itself contains the listener.
+        mainButtonSubmit!!.setOnClickListener(this)
+        mainButtonCamera!!.setOnClickListener(this)
+
+        //Create the intent but don't start the activity yet
+        mDisplayIntent = Intent(this, HomeActivity::class.java)
+
+        // if intent contains a user object, fill in the text fields with user data.
+        if (user?.fullName != null) {
+            mainButtonSubmit!!.text = "Update"
+            mainEtName!!.setText(user!!.fullName)
+            ageSpinner!!.setSelection(user!!.age!!)
+            weightSpinner!!.setSelection(user!!.weight!!)
+            heightSpinner!!.setSelection(user!!.height!!)
+            mainEtCity?.setText(user!!.city)
+            mainEtCountry?.setText(user!!.country)
+            Log.d("SEX", user!!.sex.toString())
+            if (user!!.sex == "Male") {
+                Log.d("SEX", "MALE")
+                mainRgSex?.check(R.id.radioButton)
+            } else if (user!!.sex == "Female") {
+                Log.d("SEX", "FEMALE")
+                mainRgSex?.check(R.id.radioButton2)
+            }
+            mainActivitySpinner!!.setSelection(user!!.activityLvl!!)
+            imagePath = receivedIntent?.getStringExtra("imagePath")
+            val thumbnailImage = BitmapFactory.decodeFile(imagePath)
+            if (thumbnailImage != null) {
+                mIvThumbnail!!.setImageBitmap(thumbnailImage)
+            }
+        }
+    }
+
+    private fun initSpinners() {
+
+        //ACTIVITY LVL
         mainActivitySpinner = findViewById<View>(R.id.activity_spinner) as Spinner
         mainActivitySpinner!!.onItemSelectedListener = this
 
@@ -116,44 +186,75 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         // Spinner which binds data to spinner
         mainActivitySpinner!!.adapter = ad
 
-        //Get the buttons
-        mainButtonSubmit = findViewById<View>(R.id.button_submit) as Button
-        mainButtonCamera = findViewById<View>(R.id.pic_button) as Button
+        //WEIGHT
+        weightSpinner = findViewById<View>(R.id.weight_spinner) as Spinner
+        weightSpinner!!.onItemSelectedListener = this
 
-        //Say that this class itself contains the listener.
-        mainButtonSubmit!!.setOnClickListener(this)
-        mainButtonCamera!!.setOnClickListener(this)
+        // Create the instance of ArrayAdapter
+        val ad_w: ArrayAdapter<*> = ArrayAdapter<Any?>(
+            this,
+            android.R.layout.simple_spinner_item,
+            weightsList as List<Any?>
+        )
 
-        //Create the intent but don't start the activity yet
-        mDisplayIntent = Intent(this, HomeActivity::class.java)
+        // set simple layout resource file
+        // for each item of spinner
+        ad_w.setDropDownViewResource(
+            android.R.layout.simple_spinner_dropdown_item
+        )
 
-        // if intent contains a user object, fill in the text fields with user data.
-        if (user?.fullName != null) {
-            mainButtonSubmit!!.text = "Update"
-            mainEtName!!.setText(user!!.fullName)
-            mainEtAge!!.setText(user!!.age.toString())
-            mainEtHeight!!.setText(user!!.height.toString())
-            mainEtWeight!!.setText(user!!.weight.toString())
-            mainEtCity?.setText(user!!.city)
-            mainEtCountry?.setText(user!!.country)
-            Log.d("SEX", user!!.sex.toString())
-            if (user!!.sex == "Male") {
-                Log.d("SEX","MALE")
-                mainRgSex?.check(R.id.radioButton)
-            } else if(user!!.sex == "Female") {
-                Log.d("SEX","FEMALE")
-                mainRgSex?.check(R.id.radioButton2)
-            }
-            mainActivitySpinner!!.setSelection(user!!.activityLvl!!)
-            imagePath = receivedIntent?.getStringExtra("imagePath")
-            val thumbnailImage = BitmapFactory.decodeFile(imagePath)
-            if (thumbnailImage != null) {
-                mIvThumbnail!!.setImageBitmap(thumbnailImage)
-            }
-        }
-    }
+        // Set the ArrayAdapter (ad) data on the
+        // Spinner which binds data to spinner
+        weightSpinner!!.adapter = ad_w
 
-    /**
+
+        //HEIGHT
+        heightSpinner = findViewById<View>(R.id.height_spinner) as Spinner
+        heightSpinner!!.onItemSelectedListener = this
+
+        // Create the instance of ArrayAdapter
+        val ad_h: ArrayAdapter<*> = ArrayAdapter<Any?>(
+            this,
+            android.R.layout.simple_spinner_item,
+            heightList as List<Any?>
+        )
+
+        // set simple layout resource file
+        // for each item of spinner
+        ad_h.setDropDownViewResource(
+            android.R.layout.simple_spinner_dropdown_item
+        )
+
+        // Set the ArrayAdapter (ad) data on the
+        // Spinner which binds data to spinner
+        heightSpinner!!.adapter = ad_h
+
+
+        //AGE
+        ageSpinner = findViewById<View>(R.id.age_spinner) as Spinner
+        ageSpinner!!.onItemSelectedListener = this
+
+        // Create the instance of ArrayAdapter
+        val ad_a: ArrayAdapter<*> = ArrayAdapter<Any?>(
+            this,
+            android.R.layout.simple_spinner_item,
+            agesList as List<Any?>
+        )
+
+        // set simple layout resource file
+        // for each item of spinner
+        ad_a.setDropDownViewResource(
+            android.R.layout.simple_spinner_dropdown_item
+        )
+
+        // Set the ArrayAdapter (ad) data on the
+        // Spinner which binds data to spinner
+        ageSpinner!!.adapter = ad_a
+
+}
+
+
+/**
      * On activity click, if the click is on the createUserView, validate the form. If validated, start HomeActivity
      * If pic button is pressed, launch camera
      */
@@ -207,32 +308,26 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         }
 
         //Age
-        mainEtAge = findViewById<View>(R.id.age) as EditText
-        Log.d("age", mainEtAge!!.text.toString())
-        if(mainEtAge!!.text.toString().isNullOrEmpty()){
-            Toast.makeText(this@MainActivity, "Age was left blank!", Toast.LENGTH_SHORT).show()
-            return false
-        }
-        age = Integer.parseInt(mainEtAge!!.text.toString())
-        list.add(age.toString())
+        age = ageSpinner!!.getSelectedItemPosition()
+//        if(mainEtAge!!.text.toString().isNullOrEmpty()){
+//            Toast.makeText(this@MainActivity, "Age was left blank!", Toast.LENGTH_SHORT).show()
+//            return false
+//        }
 
         //Weight
-        mainEtWeight = findViewById<View>(R.id.weight) as EditText
-        if(mainEtWeight!!.text.toString().isNullOrEmpty()){
+        weight = weightSpinner!!.getSelectedItemPosition()
+        if(weight.toString().isNullOrEmpty()){
             Toast.makeText(this@MainActivity, "Weight was left blank!", Toast.LENGTH_SHORT).show()
             return false
         }
-        weight = Integer.parseInt(mainEtWeight!!.text.toString())
-        list.add(weight.toString())
 
         //Height
-        mainEtHeight = findViewById<View>(R.id.height) as EditText
-        if(mainEtHeight!!.text.toString().isNullOrEmpty()){
+        height = heightSpinner!!.getSelectedItemPosition()
+
+        if(height.toString().isNullOrEmpty()){
             Toast.makeText(this@MainActivity, "Height was left blank!", Toast.LENGTH_SHORT).show()
             return false
         }
-        height = Integer.parseInt(mainEtHeight!!.text.toString())
-        list.add(height.toString())
 
         //Location
         mainEtCountry = findViewById<View>(R.id.country) as EditText
@@ -240,6 +335,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         if(country.isNullOrEmpty()){
             Toast.makeText(this@MainActivity, "Country was left blank!", Toast.LENGTH_SHORT).show()
             return false
+        }
+        if(country!!.length == 1 || country!!.length > 2 ) {
+            Toast.makeText(this@MainActivity, "Country must be a 2 character country code!", Toast.LENGTH_SHORT).show()
+            return false
+
         }
         list.add(country!!)
         mainEtCity = findViewById<View>(R.id.city) as EditText
@@ -323,8 +423,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
             return Environment.MEDIA_MOUNTED == state
         }
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-            // make toast of name which is selected in spinner
-            Toast.makeText(applicationContext, act_vals[p2], Toast.LENGTH_LONG).show()
     }
     override fun onNothingSelected(p0: AdapterView<*>?) {
 
