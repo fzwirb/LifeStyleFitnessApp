@@ -103,6 +103,8 @@ class WeatherActivity : AppCompatActivity() {
                 }
                 emojiView!!.text = emoji
             } catch (e: Exception) {
+                val errorString = "Loc not found!"
+                cityTextView!!.text = errorString
                 e.printStackTrace()
             }
         }.start()
