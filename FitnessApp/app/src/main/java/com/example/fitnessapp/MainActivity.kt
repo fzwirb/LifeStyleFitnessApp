@@ -44,17 +44,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     private var ageSpinner: Spinner? = null
 
     private var mainEtName: EditText? = null
-    private var mainEtAge: EditText? = null
-    private var mainEtWeight: EditText? = null
-    private var mainEtHeight: EditText? = null
     private var mainEtCountry: EditText? = null
     private var mainEtCity: EditText? = null
     private var mainRgSex: RadioGroup? = null
 
     //Variables
     private var fullName: String? = null
-    private var firstName: String? = null
-    private var lastName: String? = null
     private var age: Int? = null
     private var weight: Int? = null
     private var height: Int? = null
@@ -94,9 +89,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         // get various elements from layout
         mIvThumbnail = findViewById<View>(R.id.profile_pic) as ImageView
         mainEtName = findViewById<View>(R.id.full_name) as EditText
-//        mainEtAge = findViewById<View>(R.id.age) as EditText
-//        mainEtWeight = findViewById<View>(R.id.weight) as EditText
-//        mainEtHeight = findViewById<View>(R.id.height) as EditText
         mainEtCountry = findViewById<View>(R.id.country) as EditText
         mainEtCity = findViewById<View>(R.id.city) as EditText
         mainActivitySpinner = findViewById<View>(R.id.activity_spinner) as Spinner
@@ -163,6 +155,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         }
     }
 
+    /**
+     * method to initialize all the spinners and add data to them
+     */
     private fun initSpinners() {
 
         //ACTIVITY LVL
