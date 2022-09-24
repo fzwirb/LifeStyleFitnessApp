@@ -4,15 +4,20 @@ import android.content.Intent
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.Intents.intended
+import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import org.hamcrest.core.AllOf
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -34,16 +39,17 @@ class InstrumentedTests {
     private lateinit var mainScenario: ActivityScenario<MainActivity>
     private val mainIntent = Intent(ApplicationProvider.getApplicationContext(), MainActivity::class.java).putExtra("user", user).putExtra("full_name", "test").putExtra("the_city", "SLC").putExtra("the_country", "US")
 
-    @get:Rule
-    val hikesRule = ActivityScenarioRule<HikesActivity>(hikesIntent)
+
     @get:Rule
     val mainRule = ActivityScenarioRule<MainActivity>(mainIntent)
+
 
     /**
      * Launch the intents
      */
     @Before
     fun initialization(){
+        Intents.init();
         hikesScenario = ActivityScenario.launch(hikesIntent)
         mainScenario = ActivityScenario.launch(mainIntent)
     }
@@ -54,6 +60,7 @@ class InstrumentedTests {
     fun cleanup() {
         hikesScenario.close()
         mainScenario.close()
+        Intents.release();
     }
     /**
      * Tests that the camera is opened when clicking the pic_button element
@@ -72,12 +79,11 @@ class InstrumentedTests {
         assertEquals("com.example.fitnessapp", appContext.packageName)
     }
 
-    // TODO get working
-//    @Test
-//    fun launchHikesTest() {
-//        val expectedIntent = AllOf.allOf(IntentMatchers.hasAction(Intent.ACTION_VIEW))
-//        onView(withId(R.id.launch_hikes_button)).perform(click())
-//        intended(expectedIntent)
-//        Espresso.pressBack()
-//    }
+    /**
+     * Tests that the submit button is visible
+     */
+    @Test
+    fun testSubmitClick() {
+        onView(withId(R.id.button_submit)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+    }
 }
