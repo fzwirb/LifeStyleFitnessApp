@@ -110,26 +110,26 @@ class WeatherActivity : AppCompatActivity() {
         }.start()
 
         // Bottom Navigation listener and intents
-        var user = receivedIntent.extras?.getSerializable("user") as User
+        var user = receivedIntent.extras?.getSerializable("user") as UserData
         val imagePath = receivedIntent.getStringExtra("imagePath")
 
         bottomNav = findViewById(R.id.bottomNav)
         bottomNav.selectedItemId = R.id.bottomNav
 
         homeIntent = Intent(this, HomeActivity::class.java)
-        homeIntent!!.putExtra("user", user)
+//        homeIntent!!.putExtra("user", user)
         homeIntent!!.putExtra("imagePath", imagePath)
         homeIntent!!.putExtra("the_city", userCity)
         homeIntent!!.putExtra("the_country", userCountry)
 
         hikeIntent = Intent(this, HikesActivity::class.java)
-        hikeIntent!!.putExtra("user", user)
+//        hikeIntent!!.putExtra("user", user)
         hikeIntent!!.putExtra("imagePath", imagePath)
         hikeIntent!!.putExtra("the_city", userCity)
         hikeIntent!!.putExtra("the_country", userCountry)
 
         mainIntent = Intent(this, MainActivity::class.java)
-        mainIntent!!.putExtra("user", user)
+//        mainIntent!!.putExtra("user", user)
         mainIntent!!.putExtra("imagePath", imagePath)
         mainIntent!!.putExtra("the_city", userCity)
         mainIntent!!.putExtra("the_country", userCountry)

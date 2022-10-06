@@ -6,7 +6,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.lifecycle.Observer
 import android.widget.*
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import kotlin.math.roundToInt
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -21,7 +23,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     var homeNameTV: TextView? = null
     var homeBMR: TextView? = null
     var homeKCAL: TextView? = null
-    var user: User? = null
+    var userData: UserData? = null
 
     private var hikeIntent: Intent? = null
     private var weatherIntent: Intent? = null
@@ -48,9 +50,16 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
         val receivedIntent = intent
 
+        val appViewModel: AppViewModel by viewModels {
+            AppViewModelFactory((application as FitnessApplication).repository)
+        }
+        // this can access anything on the userdata
+        val test = appViewModel.data.value?.country
+        Log.d("hi", test.toString())
+
         //assign serialized user to the user object member var
-        user = receivedIntent.extras?.getSerializable("user") as User
-        user!!.fullName?.let { Log.d("USER_TEST", it) }
+//        user = receivedIntent.extras?.getSerializable("user") as User
+//        user!!.fullName?.let { Log.d("USER_TEST", it) }
 
         userCity = receivedIntent.getStringExtra("the_city")
         userCountry = receivedIntent.getStringExtra("the_country")
@@ -60,11 +69,11 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         if (thumbnailImage != null) {
             mIvThumbnail!!.setImageBitmap(thumbnailImage)
         }
-        homeNameTV!!.text = ("Welcome " + user!!.fullName)
-        updateBMR(user)
+//        homeNameTV!!.text = ("Welcome " + user!!.fullName)
+//        updateBMR(user)
 
         //spinner
-        userActivityLvl = user!!.activityLvl
+//        userActivityLvl = user!!.activityLvl
         homeActivitySpinner = findViewById<View>(R.id.activity_spinner) as Spinner
 
         homeActivitySpinner!!.onItemSelectedListener = this
@@ -83,26 +92,26 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         // Set the ArrayAdapter (ad) data on the
         // Spinner which binds data to spinner
         homeActivitySpinner!!.adapter = ad
-        user!!.activityLvl?.let { homeActivitySpinner!!.setSelection(it) }
+//        user!!.activityLvl?.let { homeActivitySpinner!!.setSelection(it) }
 
         // Bottom Nav
         bottomNav = findViewById(R.id.bottomNav)
         bottomNav.selectedItemId = R.id.bottomNav
 
         hikeIntent = Intent(this, HikesActivity::class.java)
-        hikeIntent!!.putExtra("user", user)
+//        hikeIntent!!.putExtra("user", user)
         hikeIntent!!.putExtra("imagePath", imagePath)
         hikeIntent!!.putExtra("the_city", userCity)
         hikeIntent!!.putExtra("the_country", userCountry)
 
         weatherIntent = Intent(this, WeatherActivity::class.java)
-        weatherIntent!!.putExtra("user", user)
+//        weatherIntent!!.putExtra("user", user)
         weatherIntent!!.putExtra("imagePath", imagePath)
         weatherIntent!!.putExtra("the_city", userCity)
         weatherIntent!!.putExtra("the_country", userCountry)
 
         mainIntent = Intent(this, MainActivity::class.java)
-        mainIntent!!.putExtra("user", user)
+//        mainIntent!!.putExtra("user", user)
         mainIntent!!.putExtra("imagePath", imagePath)
         mainIntent!!.putExtra("the_city", userCity)
         mainIntent!!.putExtra("the_country", userCountry)
@@ -137,7 +146,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
          * Helper method for calculateBMR that uses a when statement to calculate
          * the kcal per day based on the activity level of the user
          */
-        fun calculateKCAL(user: User, bmr: Double?): Double? {
+        fun calculateKCAL(user: UserData, bmr: Double?): Double? {
             var actLvl = user.activityLvl
             //marathon, or triathlon, etc.
             when (actLvl) {
@@ -157,7 +166,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         /**
          * Takes in the user object and calculates the BMR and KCAL based in the user data
          */
-        fun calculateBMR(u: User): Double {
+        fun calculateBMR(u: UserData): Double {
             var bmr: Double?
 
             var heightCM = u.height?.times(2.54)
@@ -172,15 +181,15 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     }
      override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
          //update user's activity lvl
-         user = user?.copy(activityLvl = homeActivitySpinner!!.selectedItemPosition)
-         Log.d("NEW_LVL", user!!.activityLvl.toString())
-         updateBMR(user)
+//         user = user?.copy(activityLvl = homeActivitySpinner!!.selectedItemPosition)
+//         Log.d("NEW_LVL", user!!.activityLvl.toString())
+//         updateBMR(user)
     }
     /**
      * Driver method for computing and displaying the user's BMR and KCAL
      * Called when activity is created and everytime onItemSelected is called
      */
-    private fun updateBMR(u: User?) {
+    private fun updateBMR(u: UserData?) {
         u!!.fullName?.let { Log.d("UPDATE_BMR", it) }
         var bmr: Double? = calculateBMR(u)
         Log.d("BMR", bmr.toString())

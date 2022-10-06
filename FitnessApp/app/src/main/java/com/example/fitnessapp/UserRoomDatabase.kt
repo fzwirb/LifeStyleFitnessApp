@@ -27,7 +27,7 @@ abstract class UserRoomDatabase : RoomDatabase() {
             return mInstance?: synchronized(this){
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    UserRoomDatabase::class.java, "weather.db"
+                    UserRoomDatabase::class.java, "application.db"
                 )
                     .addCallback(RoomDatabaseCallback(scope))
                     .fallbackToDestructiveMigration()
@@ -51,9 +51,8 @@ abstract class UserRoomDatabase : RoomDatabase() {
         }
 
         suspend fun populateDbTask (userDataDao: UserDataDao) {
-            userDataDao.insert(UserData(
-                        UserData.User("test", 72, 190, 24, 0, "US", "Salt Lake City", "Male")
-            ))
+            userDataDao.insert(UserData("test", 72, 190, 24, 0, "US", "Salt Lake City", "Male")
+            )
         }
     }
 }

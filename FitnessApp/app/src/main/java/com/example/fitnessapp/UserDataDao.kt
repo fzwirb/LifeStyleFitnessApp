@@ -1,7 +1,6 @@
 package com.example.fitnessapp
 
 import androidx.room.*
-
 import kotlinx.coroutines.flow.Flow
 
 @Dao

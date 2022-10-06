@@ -1,7 +1,7 @@
 package com.example.fitnessapp
 
 import android.annotation.SuppressLint
-import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -15,17 +15,12 @@ import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import com.google.gson.Gson
-import com.example.fitnessapp.NetworkUtilities.buildURLFromString
-import com.example.fitnessapp.NetworkUtilities.getDataFromURL
-import org.json.JSONArray
-import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.roundToInt
+import androidx.activity.viewModels
 
 /**
  * Activity that accepts or updates user information
@@ -58,8 +53,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     private var activityLvl: Int? = null
     private var sex: String? = null
     private var receivedIntent: Intent? = null
-    private var user: User? = null
     private var imagePath: String? = null
+    private var userData: UserData? = null
 
     var mIvThumbnail: ImageView? = null
 
@@ -76,6 +71,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     private var heightList: MutableList<Int> = ArrayList()
 
     private var mDisplayIntent: Intent? = null
+
+    private val appViewModel: AppViewModel by viewModels {
+        AppViewModelFactory((application as FitnessApplication).repository)
+    }
 
     /**
      * Functions executes on creation of the activity
@@ -96,7 +95,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         heightSpinner = findViewById<View>(R.id.height_spinner) as Spinner
         ageSpinner = findViewById<View>(R.id.age_spinner) as Spinner
 
-
         mainRgSex = findViewById<View>(R.id.sex) as RadioGroup
 
         var i: Int? = 0
@@ -113,7 +111,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         if (intent!!.hasExtra("user")) {
             Log.d("Intent", "HAS USER")
             receivedIntent = intent
-            user = receivedIntent?.extras?.getSerializable("user") as User
+//            user = receivedIntent?.extras?.getSerializable("user") as User
         }
 
         initSpinners()
@@ -129,30 +127,30 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         //Create the intent but don't start the activity yet
         mDisplayIntent = Intent(this, HomeActivity::class.java)
 
-        // if intent contains a user object, fill in the text fields with user data.
-        if (user?.fullName != null) {
-            mainButtonSubmit!!.text = "Update"
-            mainEtName!!.setText(user!!.fullName)
-            ageSpinner!!.setSelection(user!!.age!!)
-            weightSpinner!!.setSelection(user!!.weight!!)
-            heightSpinner!!.setSelection(user!!.height!!)
-            mainEtCity?.setText(user!!.city)
-            mainEtCountry?.setText(user!!.country)
-            Log.d("SEX", user!!.sex.toString())
-            if (user!!.sex == "Male") {
-                Log.d("SEX", "MALE")
-                mainRgSex?.check(R.id.radioButton)
-            } else if (user!!.sex == "Female") {
-                Log.d("SEX", "FEMALE")
-                mainRgSex?.check(R.id.radioButton2)
-            }
-            mainActivitySpinner!!.setSelection(user!!.activityLvl!!)
-            imagePath = receivedIntent?.getStringExtra("imagePath")
-            val thumbnailImage = BitmapFactory.decodeFile(imagePath)
-            if (thumbnailImage != null) {
-                mIvThumbnail!!.setImageBitmap(thumbnailImage)
-            }
-        }
+//        // if intent contains a user object, fill in the text fields with user data.
+//        if (user?.fullName != null) {
+//            mainButtonSubmit!!.text = "Update"
+//            mainEtName!!.setText(user!!.fullName)
+//            ageSpinner!!.setSelection(user!!.age!!)
+//            weightSpinner!!.setSelection(user!!.weight!!)
+//            heightSpinner!!.setSelection(user!!.height!!)
+//            mainEtCity?.setText(user!!.city)
+//            mainEtCountry?.setText(user!!.country)
+//            Log.d("SEX", user!!.sex.toString())
+//            if (user!!.sex == "Male") {
+//                Log.d("SEX", "MALE")
+//                mainRgSex?.check(R.id.radioButton)
+//            } else if (user!!.sex == "Female") {
+//                Log.d("SEX", "FEMALE")
+//                mainRgSex?.check(R.id.radioButton2)
+//            }
+//            mainActivitySpinner!!.setSelection(user!!.activityLvl!!)
+//            imagePath = receivedIntent?.getStringExtra("imagePath")
+//            val thumbnailImage = BitmapFactory.decodeFile(imagePath)
+//            if (thumbnailImage != null) {
+//                mIvThumbnail!!.setImageBitmap(thumbnailImage)
+//            }
+//        }
     }
 
     /**
@@ -258,11 +256,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
             when (createUserView.id) {
                 R.id.button_submit -> {
                     var validated = validateForm()
+                    // TODO
+                    validated = true
                     if(validated) {
                         //send data to the new home activity
-                        user = User( fullName, height, weight, age, activityLvl, country, city, sex)
+                        userData = UserData( fullName, height, weight, age, activityLvl, country, city, sex)
+                        appViewModel.setUser(userData)
                         mDisplayIntent!!.putExtra("imagePath", imagePath)
-                        mDisplayIntent!!.putExtra("user", user)
                         mDisplayIntent!!.putExtra("full_name", fullName)
                         mDisplayIntent!!.putExtra("the_city", city)
                         mDisplayIntent!!.putExtra("the_country", country)
@@ -423,16 +423,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
 
     }
 }
-/**
- * Class representing user data
- */
-data class User(
-    val fullName: String?,
-    val height: Int?,
-    val weight: Int?,
-    val age: Int?,
-    val activityLvl: Int?,
-    val country: String?,
-    val city: String?,
-    val sex: String?,
-) : Serializable {}
+///**
+// * Class representing user data
+// */
+//data class User(
+//    val fullName: String?,
+//    val height: Int?,
+//    val weight: Int?,
+//    val age: Int?,
+//    val activityLvl: Int?,
+//    val country: String?,
+//    val city: String?,
+//    val sex: String?,
+//) : Serializable {}

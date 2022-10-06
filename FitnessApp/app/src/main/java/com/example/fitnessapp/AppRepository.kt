@@ -11,9 +11,20 @@ import kotlin.jvm.Synchronized
 
 class AppRepository private constructor(userDao : UserDataDao) {
     val data = MutableLiveData<UserData>()
-
+    private var mUserDataDao: UserDataDao = userDao
     val allUserData: Flow<List<UserData>> = userDao.getAllUserData()
 
+    @WorkerThread
+    suspend fun insert(userData: UserData) {
+        mUserDataDao.insert(userData)
+    }
+
+    fun setUserData(user: UserData){
+        mScope.launch(Dispatchers.IO){
+            data.postValue(user)
+            insert(user)
+        }
+    }
 
     companion object {
         private var mInstance: AppRepository? = null

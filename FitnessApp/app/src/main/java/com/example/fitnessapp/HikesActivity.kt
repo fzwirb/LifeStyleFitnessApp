@@ -33,7 +33,7 @@ class HikesActivity : AppCompatActivity(), View.OnClickListener {
         mButtonSubmit!!.setOnClickListener(this)
 
         // bottom nav
-        var user = receivedIntent.extras?.getSerializable("user") as User
+        var user = receivedIntent.extras?.getSerializable("user") as UserData
         val imagePath = receivedIntent.getStringExtra("imagePath")
         val userCity = receivedIntent.getStringExtra("the_city")
         val userCountry = receivedIntent.getStringExtra("the_country")
@@ -44,19 +44,19 @@ class HikesActivity : AppCompatActivity(), View.OnClickListener {
         bottomNav.selectedItemId = R.id.bottomNav
 
         homeIntent = Intent(this, HomeActivity::class.java)
-        homeIntent!!.putExtra("user", user)
+//        homeIntent!!.putExtra("user", user)
         homeIntent!!.putExtra("imagePath", imagePath)
         homeIntent!!.putExtra("the_city", userCity)
         homeIntent!!.putExtra("the_country", userCountry)
 
         weatherIntent = Intent(this, WeatherActivity::class.java)
-        weatherIntent!!.putExtra("user", user)
+//        weatherIntent!!.putExtra("user", user)
         weatherIntent!!.putExtra("imagePath", imagePath)
         weatherIntent!!.putExtra("the_city", userCity)
         weatherIntent!!.putExtra("the_country", userCountry)
 
         mainIntent = Intent(this, MainActivity::class.java)
-        mainIntent!!.putExtra("user", user)
+//        mainIntent!!.putExtra("user", user)
         mainIntent!!.putExtra("imagePath", imagePath)
         mainIntent!!.putExtra("the_city", userCity)
         mainIntent!!.putExtra("the_country", userCountry)
