@@ -6,6 +6,8 @@ import android.content.Intent
 import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import com.example.fitnessapp.NetworkUtilities.buildURLFromString
 import com.example.fitnessapp.NetworkUtilities.getDataFromURL
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -34,14 +36,22 @@ class WeatherActivity : AppCompatActivity() {
     /**
      * Function run on creation of the activity
      */
+    @RequiresApi(33)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_weather)
 
         // get the received intent and city and country
         val receivedIntent = intent
-        val userCity = receivedIntent.getStringExtra("the_city")
-        val userCountry = receivedIntent.getStringExtra("the_country")
+
+        val appViewModel: AppViewModel by viewModels {
+            AppViewModelFactory((application as FitnessApplication).repository)
+        }
+        // this can access anything on the userdata
+        val userCountry = appViewModel.data.value?.country
+        val userCity = appViewModel.data.value?.city
+        Log.d("------------", userCountry.toString())
+
 
         // get all text views to be populated
         cityTextView = findViewById<View>(R.id.city_text_view) as TextView
@@ -110,7 +120,7 @@ class WeatherActivity : AppCompatActivity() {
         }.start()
 
         // Bottom Navigation listener and intents
-        var user = receivedIntent.extras?.getSerializable("user") as UserData
+//        var user = receivedIntent.extras?.getSerializable("user") as UserData
         val imagePath = receivedIntent.getStringExtra("imagePath")
 
         bottomNav = findViewById(R.id.bottomNav)
