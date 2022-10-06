@@ -14,7 +14,9 @@ data class UserData(
     val activityLvl: Int?,
     val country: String?,
     val city: String?,
-    val sex: String?) {
+    val sex: String?,
+    val imagePath: String?
+    ) {
 
     @field:PrimaryKey(autoGenerate = true)
     var id : Int = 0

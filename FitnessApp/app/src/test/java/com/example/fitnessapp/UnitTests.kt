@@ -1,6 +1,5 @@
 package com.example.fitnessapp
 
-import android.util.Log
 import org.junit.Test
 
 import org.junit.Assert.*

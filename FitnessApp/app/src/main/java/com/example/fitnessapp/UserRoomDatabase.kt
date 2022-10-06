@@ -51,7 +51,7 @@ abstract class UserRoomDatabase : RoomDatabase() {
         }
 
         suspend fun populateDbTask (userDataDao: UserDataDao) {
-            userDataDao.insert(UserData("test", 72, 190, 24, 0, "US", "Salt Lake City", "Male")
+            userDataDao.insert(UserData("test", 72, 190, 24, 0, "US", "Salt Lake City", "Male","test/path")
             )
         }
     }

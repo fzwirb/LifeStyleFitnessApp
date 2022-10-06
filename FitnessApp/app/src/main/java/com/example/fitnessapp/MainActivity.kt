@@ -128,29 +128,30 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         mDisplayIntent = Intent(this, HomeActivity::class.java)
 
 //        // if intent contains a user object, fill in the text fields with user data.
-//        if (user?.fullName != null) {
-//            mainButtonSubmit!!.text = "Update"
-//            mainEtName!!.setText(user!!.fullName)
-//            ageSpinner!!.setSelection(user!!.age!!)
-//            weightSpinner!!.setSelection(user!!.weight!!)
-//            heightSpinner!!.setSelection(user!!.height!!)
-//            mainEtCity?.setText(user!!.city)
-//            mainEtCountry?.setText(user!!.country)
-//            Log.d("SEX", user!!.sex.toString())
-//            if (user!!.sex == "Male") {
-//                Log.d("SEX", "MALE")
-//                mainRgSex?.check(R.id.radioButton)
-//            } else if (user!!.sex == "Female") {
-//                Log.d("SEX", "FEMALE")
-//                mainRgSex?.check(R.id.radioButton2)
-//            }
-//            mainActivitySpinner!!.setSelection(user!!.activityLvl!!)
-//            imagePath = receivedIntent?.getStringExtra("imagePath")
-//            val thumbnailImage = BitmapFactory.decodeFile(imagePath)
-//            if (thumbnailImage != null) {
-//                mIvThumbnail!!.setImageBitmap(thumbnailImage)
-//            }
-//        }
+        appViewModel.data.value?.fullName?.let { Log.d("USER_DATA", it) }
+        if (appViewModel.data.value?.fullName != null) {
+            mainButtonSubmit!!.text = "Update"
+            mainEtName!!.setText(appViewModel.data.value!!.fullName)
+            ageSpinner!!.setSelection(appViewModel.data.value!!.age!!)
+            weightSpinner!!.setSelection(appViewModel.data.value!!.weight!!)
+            heightSpinner!!.setSelection(appViewModel.data.value!!.height!!)
+            mainEtCity?.setText(appViewModel.data.value!!.city)
+            mainEtCountry?.setText(appViewModel.data.value!!.country)
+            Log.d("SEX", appViewModel.data.value!!.sex.toString())
+            if (appViewModel.data.value!!.sex == "Male") {
+                Log.d("SEX", "MALE")
+                mainRgSex?.check(R.id.radioButton)
+            } else if (appViewModel.data.value!!.sex == "Female") {
+                Log.d("SEX", "FEMALE")
+                mainRgSex?.check(R.id.radioButton2)
+            }
+            mainActivitySpinner!!.setSelection(appViewModel.data.value!!.activityLvl!!)
+            imagePath = appViewModel.data.value?.imagePath
+            val thumbnailImage = BitmapFactory.decodeFile(imagePath)
+            if (thumbnailImage != null) {
+                mIvThumbnail!!.setImageBitmap(thumbnailImage)
+            }
+        }
     }
 
     /**
@@ -260,13 +261,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
                     validated = true
                     if(validated) {
                         //send data to the new home activity
-                        userData = UserData( fullName, height, weight, age, activityLvl, country, city, sex)
+                        userData = UserData( fullName, height, weight, age, activityLvl, country, city, sex, imagePath)
                         appViewModel.setUser(userData)
-                        mDisplayIntent!!.putExtra("imagePath", imagePath)
-                        mDisplayIntent!!.putExtra("full_name", fullName)
-                        mDisplayIntent!!.putExtra("the_city", city)
-                        mDisplayIntent!!.putExtra("the_country", country)
                         startActivity(mDisplayIntent)
+
                     }
                     else{
                         return
@@ -377,7 +375,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
             //Open a file and write to it
             if (isExternalStorageWritable) {
                 imagePath = saveImage(mainThumbnailImage)
-                mDisplayIntent!!.putExtra("imagePath", imagePath)
             } else {
                 Toast.makeText(this, "External storage not writable.", Toast.LENGTH_SHORT).show()
             }
@@ -423,16 +420,3 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
 
     }
 }
-///**
-// * Class representing user data
-// */
-//data class User(
-//    val fullName: String?,
-//    val height: Int?,
-//    val weight: Int?,
-//    val age: Int?,
-//    val activityLvl: Int?,
-//    val country: String?,
-//    val city: String?,
-//    val sex: String?,
-//) : Serializable {}

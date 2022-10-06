@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.lifecycle.Observer
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -37,10 +36,16 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private var homeActivitySpinner: Spinner? = null
     private var act_vals = arrayOf<String>("Sedentary", "Lightly active", "Moderately active", "Very active", "Extra active")
     private var userActivityLvl: Int? = null
+    private lateinit var appViewModel: AppViewModel
+
     @RequiresApi(33)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+        val appView: AppViewModel by viewModels {
+            AppViewModelFactory((application as FitnessApplication).repository)
+        }
+        appViewModel = appView
 
         //Get the image view
         mIvThumbnail = findViewById<View>(R.id.profile_pic) as ImageView
@@ -50,27 +55,22 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
         val receivedIntent = intent
 
-        val appViewModel: AppViewModel by viewModels {
-            AppViewModelFactory((application as FitnessApplication).repository)
-        }
+
         // this can access anything on the userdata
         val test = appViewModel.data.value?.country
         val test2 = appViewModel.data.value?.activityLvl
-        Log.d("hi", test.toString())
+        Log.d("TEST_VIEW", test.toString())
 
         //assign serialized user to the user object member var
 //        user = receivedIntent.extras?.getSerializable("user") as User
 //        user!!.fullName?.let { Log.d("USER_TEST", it) }
 
-        userCity = receivedIntent.getStringExtra("the_city")
-        userCountry = receivedIntent.getStringExtra("the_country")
-
-        val imagePath = receivedIntent.getStringExtra("imagePath")
+        val imagePath = appViewModel.data.value?.imagePath
         val thumbnailImage = BitmapFactory.decodeFile(imagePath)
         if (thumbnailImage != null) {
             mIvThumbnail!!.setImageBitmap(thumbnailImage)
         }
-//        homeNameTV!!.text = ("Welcome " + user!!.fullName)
+        homeNameTV!!.text = ("Welcome " + appViewModel.data.value!!.fullName)
 //        updateBMR(user)
 
         //spinner
@@ -100,22 +100,11 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         bottomNav.selectedItemId = R.id.bottomNav
 
         hikeIntent = Intent(this, HikesActivity::class.java)
-//        hikeIntent!!.putExtra("user", user)
-        hikeIntent!!.putExtra("imagePath", imagePath)
-        hikeIntent!!.putExtra("the_city", userCity)
-        hikeIntent!!.putExtra("the_country", userCountry)
 
         weatherIntent = Intent(this, WeatherActivity::class.java)
-//        weatherIntent!!.putExtra("user", user)
-        weatherIntent!!.putExtra("imagePath", imagePath)
-        weatherIntent!!.putExtra("the_city", userCity)
-        weatherIntent!!.putExtra("the_country", userCountry)
 
         mainIntent = Intent(this, MainActivity::class.java)
-//        mainIntent!!.putExtra("user", user)
-        mainIntent!!.putExtra("imagePath", imagePath)
-        mainIntent!!.putExtra("the_city", userCity)
-        mainIntent!!.putExtra("the_country", userCountry)
+
 
         bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
@@ -147,10 +136,9 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
          * Helper method for calculateBMR that uses a when statement to calculate
          * the kcal per day based on the activity level of the user
          */
-        fun calculateKCAL(user: UserData, bmr: Double?): Double? {
-            var actLvl = user.activityLvl
-            //marathon, or triathlon, etc.
-            when (actLvl) {
+        fun calculateKCAL(u: UserData?, bmr: Double?): Double? {
+
+            when (u?.activityLvl) {
                 //Sedentary = BMR x 1.2 (little or no exercise, desk job)
                 0 -> return (bmr?.times(1.2))
                 //Lightly active = BMR x 1.375 (light exercise/ sports 1-3 days/week)
@@ -167,31 +155,30 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         /**
          * Takes in the user object and calculates the BMR and KCAL based in the user data
          */
-        fun calculateBMR(u: UserData): Double {
+        fun calculateBMR(u: UserData?): Double {
             var bmr: Double?
 
-            var heightCM = u.height?.times(2.54)
-            var weightKG = u.weight?.div(2.205)
-            bmr = if(u.sex == "Male" ){
-                (66.47 + (13.75 * weightKG!!) + (5.003 * heightCM!!) - (6.755 * u.age!!))
+            var heightCM = u?.height?.times(2.54)
+            var weightKG = u?.weight?.div(2.205)
+            bmr = if(u?.sex == "Male" ){
+                (66.47 + (13.75 * weightKG!!) + (5.003 * heightCM!!) - (6.755 * u?.age!!))
             } else{
-                (655.1 + (9.563  * weightKG!!) + (1.850 * heightCM!!) - (4.676 * u.age!!))
+                (655.1 + (9.563  * weightKG!!) + (1.850 * heightCM!!) - (4.676 * u?.age!!))
             }
             return bmr
         }
     }
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-        //update user's activity lvl
-//         user = user?.copy(activityLvl = homeActivitySpinner!!.selectedItemPosition)
-//         Log.d("NEW_LVL", user!!.activityLvl.toString())
-//         updateBMR(user)
+        val newLvl = homeActivitySpinner!!.selectedItemPosition
+        userData = UserData( appViewModel.data.value?.fullName, appViewModel.data.value?.height, appViewModel.data.value?.weight, appViewModel.data.value?.age, newLvl, appViewModel.data.value?.country, appViewModel.data.value?.city, appViewModel.data.value?.sex, appViewModel.data.value?.imagePath)
+
+        updateBMR(userData)
     }
     /**
      * Driver method for computing and displaying the user's BMR and KCAL
      * Called when activity is created and everytime onItemSelected is called
      */
     private fun updateBMR(u: UserData?) {
-        u!!.fullName?.let { Log.d("UPDATE_BMR", it) }
         var bmr: Double? = calculateBMR(u)
         Log.d("BMR", bmr.toString())
         homeBMR!!.text = ("BMR: " + bmr!!.roundToInt())
