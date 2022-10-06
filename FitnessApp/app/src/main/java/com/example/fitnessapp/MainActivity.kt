@@ -25,6 +25,11 @@ import java.io.FileOutputStream
 import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.activity.viewModels
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+
 import kotlin.math.roundToInt
 
 /**
@@ -32,8 +37,11 @@ import kotlin.math.roundToInt
  */
 
 class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnItemSelectedListener {
-    @RequiresApi(33)
 
+    private val mAppViewModel: AppViewModel by viewModels {
+        AppViewModelFactory((application as FitnessApplication).repository)
+    }
+    @RequiresApi(33)
     //Ui elements
     private var mainButtonSubmit: Button? = null
     private var mainButtonCamera: Button? = null
