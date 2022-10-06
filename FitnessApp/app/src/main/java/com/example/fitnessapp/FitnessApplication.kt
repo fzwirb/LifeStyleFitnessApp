@@ -4,6 +4,10 @@ import android.app.Application
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 
+/**
+ * Singleton representing the application
+ */
+
 class FitnessApplication : Application() {
     private val applicationScope = CoroutineScope(SupervisorJob())
 

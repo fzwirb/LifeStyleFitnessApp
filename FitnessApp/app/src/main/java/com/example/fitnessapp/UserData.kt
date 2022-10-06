@@ -1,9 +1,11 @@
 package com.example.fitnessapp
 
-import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.io.Serializable
+
+/**
+ * Data class to store user data
+ */
 
 @Entity(tableName = "user_table")
 data class UserData(

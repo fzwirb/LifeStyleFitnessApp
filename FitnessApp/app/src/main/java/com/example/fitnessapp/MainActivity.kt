@@ -1,7 +1,6 @@
 package com.example.fitnessapp
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -17,7 +16,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import java.io.File
 import java.io.FileOutputStream
-import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.activity.viewModels
@@ -107,13 +105,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
             j += 5
         }
 
-        // if the received intent has user object, set user to be the received user object
-        if (intent!!.hasExtra("user")) {
-            Log.d("Intent", "HAS USER")
-            receivedIntent = intent
-//            user = receivedIntent?.extras?.getSerializable("user") as User
-        }
-
         initSpinners()
 
         //Get the buttons
@@ -127,7 +118,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         //Create the intent but don't start the activity yet
         mDisplayIntent = Intent(this, HomeActivity::class.java)
 
-//        // if intent contains a user object, fill in the text fields with user data.
+        // if intent contains a user object, fill in the text fields with user data.
         appViewModel.data.value?.fullName?.let { Log.d("USER_DATA", it) }
         if (appViewModel.data.value?.fullName != null) {
             mainButtonSubmit!!.text = "Update"
@@ -247,7 +238,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
 
     }
 
-
     /**
      * On activity click, if the click is on the createUserView, validate the form. If validated, start HomeActivity
      * If pic button is pressed, launch camera
@@ -257,14 +247,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
             when (createUserView.id) {
                 R.id.button_submit -> {
                     var validated = validateForm()
-                    // TODO
-                    validated = true
                     if(validated) {
                         //send data to the new home activity
                         userData = UserData( fullName, height, weight, age, activityLvl, country, city, sex, imagePath)
                         appViewModel.setUser(userData)
                         startActivity(mDisplayIntent)
-
                     }
                     else{
                         return
@@ -302,10 +289,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
 
         //Age
         age = ageSpinner!!.getSelectedItemPosition()
-//        if(mainEtAge!!.text.toString().isNullOrEmpty()){
-//            Toast.makeText(this@MainActivity, "Age was left blank!", Toast.LENGTH_SHORT).show()
-//            return false
-//        }
 
         //Weight
         weight = weightSpinner!!.getSelectedItemPosition()
@@ -332,7 +315,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         if(country!!.length == 1 || country!!.length > 2 ) {
             Toast.makeText(this@MainActivity, "Country must be a 2 character country code!", Toast.LENGTH_SHORT).show()
             return false
-
         }
         list.add(country!!)
         mainEtCity = findViewById<View>(R.id.city) as EditText

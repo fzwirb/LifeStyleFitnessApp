@@ -10,13 +10,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+/**
+ *  Database class that is used as a singleton in the Fitness Application
+ */
+
 @Database(entities = [UserData::class], version = 1, exportSchema = false)
 abstract class UserRoomDatabase : RoomDatabase() {
     abstract fun userDataDao(): UserDataDao
 
-    // Make the db singleton. Could in theory
-    // make this an object class, but the companion object approach
-    // is nicer (imo)
     companion object {
         @Volatile
         private var mInstance: UserRoomDatabase? = null

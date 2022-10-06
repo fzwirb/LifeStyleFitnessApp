@@ -29,13 +29,9 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private var mainIntent: Intent? = null
     lateinit var bottomNav : BottomNavigationView
 
-    private var userCountry: String? = null
-    private var userCity: String? = null
-
     //spinner
     private var homeActivitySpinner: Spinner? = null
     private var act_vals = arrayOf<String>("Sedentary", "Lightly active", "Moderately active", "Very active", "Extra active")
-    private var userActivityLvl: Int? = null
     private lateinit var appViewModel: AppViewModel
 
     @RequiresApi(33)
@@ -61,9 +57,6 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         val test2 = appViewModel.data.value?.activityLvl
         Log.d("TEST_VIEW", test.toString())
 
-        //assign serialized user to the user object member var
-//        user = receivedIntent.extras?.getSerializable("user") as User
-//        user!!.fullName?.let { Log.d("USER_TEST", it) }
 
         val imagePath = appViewModel.data.value?.imagePath
         val thumbnailImage = BitmapFactory.decodeFile(imagePath)
@@ -71,10 +64,8 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             mIvThumbnail!!.setImageBitmap(thumbnailImage)
         }
         homeNameTV!!.text = ("Welcome " + appViewModel.data.value!!.fullName)
-//        updateBMR(user)
 
         //spinner
-//        userActivityLvl = user!!.activityLvl
         homeActivitySpinner = findViewById<View>(R.id.activity_spinner) as Spinner
 
         homeActivitySpinner!!.onItemSelectedListener = this
@@ -93,16 +84,13 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         // Set the ArrayAdapter (ad) data on the
         // Spinner which binds data to spinner
         homeActivitySpinner!!.adapter = ad
-//        user!!.activityLvl?.let { homeActivitySpinner!!.setSelection(it) }
 
         // Bottom Nav
         bottomNav = findViewById(R.id.bottomNav)
         bottomNav.selectedItemId = R.id.bottomNav
 
         hikeIntent = Intent(this, HikesActivity::class.java)
-
         weatherIntent = Intent(this, WeatherActivity::class.java)
-
         mainIntent = Intent(this, MainActivity::class.java)
 
 
@@ -137,7 +125,6 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
          * the kcal per day based on the activity level of the user
          */
         fun calculateKCAL(u: UserData?, bmr: Double?): Double? {
-
             when (u?.activityLvl) {
                 //Sedentary = BMR x 1.2 (little or no exercise, desk job)
                 0 -> return (bmr?.times(1.2))
@@ -156,10 +143,9 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
          * Takes in the user object and calculates the BMR and KCAL based in the user data
          */
         fun calculateBMR(u: UserData?): Double {
-            var bmr: Double?
-
-            var heightCM = u?.height?.times(2.54)
-            var weightKG = u?.weight?.div(2.205)
+            val bmr: Double?
+            val heightCM = u?.height?.times(2.54)
+            val weightKG = u?.weight?.div(2.205)
             bmr = if(u?.sex == "Male" ){
                 (66.47 + (13.75 * weightKG!!) + (5.003 * heightCM!!) - (6.755 * u?.age!!))
             } else{

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import androidx.activity.viewModels
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 /**
@@ -20,46 +21,32 @@ class HikesActivity : AppCompatActivity(), View.OnClickListener {
     private var mainIntent: Intent? = null
 
     private var mButtonSubmit: Button? = null
-    lateinit var cityString: String
-    lateinit var countryString: String
+    lateinit var userCity: String
+    lateinit var userCountry: String
+    private lateinit var appViewModel: AppViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_hikes)
-        val receivedIntent = intent
+        val appView: AppViewModel by viewModels {
+            AppViewModelFactory((application as FitnessApplication).repository)
+        }
+        appViewModel = appView
 
         //Get the button and set listener to this
         mButtonSubmit = findViewById<View>(R.id.launch_hikes_button) as Button
         mButtonSubmit!!.setOnClickListener(this)
 
         // bottom nav
-        var user = receivedIntent.extras?.getSerializable("user") as UserData
-        val imagePath = receivedIntent.getStringExtra("imagePath")
-        val userCity = receivedIntent.getStringExtra("the_city")
-        val userCountry = receivedIntent.getStringExtra("the_country")
-        cityString = receivedIntent.getStringExtra("the_city").toString()
-        countryString = receivedIntent.getStringExtra("the_country").toString()
+        userCity = appViewModel.data.value?.city.toString()
+        userCountry = appViewModel.data.value?.country.toString()
 
         bottomNav = findViewById(R.id.bottomNav)
         bottomNav.selectedItemId = R.id.bottomNav
 
         homeIntent = Intent(this, HomeActivity::class.java)
-//        homeIntent!!.putExtra("user", user)
-        homeIntent!!.putExtra("imagePath", imagePath)
-        homeIntent!!.putExtra("the_city", userCity)
-        homeIntent!!.putExtra("the_country", userCountry)
-
         weatherIntent = Intent(this, WeatherActivity::class.java)
-//        weatherIntent!!.putExtra("user", user)
-        weatherIntent!!.putExtra("imagePath", imagePath)
-        weatherIntent!!.putExtra("the_city", userCity)
-        weatherIntent!!.putExtra("the_country", userCountry)
-
         mainIntent = Intent(this, MainActivity::class.java)
-//        mainIntent!!.putExtra("user", user)
-        mainIntent!!.putExtra("imagePath", imagePath)
-        mainIntent!!.putExtra("the_city", userCity)
-        mainIntent!!.putExtra("the_country", userCountry)
 
         bottomNav.setOnItemSelectedListener {
             Log.d("it.itemId: ", it.itemId.toString())
@@ -91,7 +78,7 @@ class HikesActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(view: View) {
         when (view.id) {
             R.id.launch_hikes_button -> {
-                val searchString = "geo:0,0?q=$cityString+$countryString+hikes"
+                val searchString = "geo:0,0?q=$userCity+$userCountry+hikes"
                 val searchUri = Uri.parse(searchString)
                 val mapIntent = Intent(Intent.ACTION_VIEW, searchUri)
                 mapIntent.setPackage("com.google.android.apps.maps")
