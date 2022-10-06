@@ -55,6 +55,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         }
         // this can access anything on the userdata
         val test = appViewModel.data.value?.country
+        val test2 = appViewModel.data.value?.activityLvl
         Log.d("hi", test.toString())
 
         //assign serialized user to the user object member var
@@ -179,8 +180,8 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             return bmr
         }
     }
-     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-         //update user's activity lvl
+    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+        //update user's activity lvl
 //         user = user?.copy(activityLvl = homeActivitySpinner!!.selectedItemPosition)
 //         Log.d("NEW_LVL", user!!.activityLvl.toString())
 //         updateBMR(user)
