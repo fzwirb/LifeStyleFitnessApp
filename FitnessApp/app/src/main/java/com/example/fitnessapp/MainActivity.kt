@@ -39,7 +39,7 @@ import kotlin.math.roundToInt
 class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private val mAppViewModel: AppViewModel by viewModels {
-        AppViewModelFactory((application as AppViewModel).repository)
+        AppViewModelFactory((application as FitnessApplication).repository)
     }
     @RequiresApi(33)
     //Ui elements
