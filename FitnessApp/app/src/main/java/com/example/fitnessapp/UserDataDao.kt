@@ -13,4 +13,7 @@ interface UserDataDao {
 
     @Query("DELETE FROM user_table")
     suspend fun deleteAll()
+
+    @Query("SELECT * FROM user_table  ORDER BY id DESC LIMIT 1")
+    suspend fun readFromDB(): UserData
 }

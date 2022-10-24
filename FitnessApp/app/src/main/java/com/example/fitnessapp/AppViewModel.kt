@@ -1,5 +1,6 @@
 package com.example.fitnessapp
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.*
 import kotlinx.coroutines.flow.Flow
@@ -15,8 +16,13 @@ class AppViewModel(repository: AppRepository) : ViewModel() {
     // api to set user data using the repository in the database
     fun setUser(user: UserData?) {
         if (user != null) {
+            Log.d("TEST_DATABASE", "SENT USER DATA")
             appRepository.setUserData(user)
         }
+    }
+    suspend fun getUser(): UserData? {
+        var u = appRepository.getUserData()
+        return u
     }
 
     val data: LiveData<UserData>

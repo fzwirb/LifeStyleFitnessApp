@@ -9,8 +9,11 @@ import android.view.View
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.lifecycleScope
 import kotlin.math.roundToInt
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.launch
+
 //https://stackoverflow.com/questions/50897540/how-do-i-implement-serializable-in-kotlin-so-it-also-works-in-java
 
 /**
@@ -51,19 +54,23 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
         val receivedIntent = intent
 
+        lifecycleScope.launch {
+            //get user will happen first
+            val u = appViewModel.getUser()
+            userData = u
+            //once user has been retrieved from db and userData is init, then fill in ui components with data
+            fillData(userData)
+        }
+    }
 
-        // this can access anything on the userdata
-        val test = appViewModel.data.value?.country
-        val test2 = appViewModel.data.value?.activityLvl
-        Log.d("TEST_VIEW", test.toString())
+    private fun fillData(u: UserData?) {
+        val imagePath = u?.imagePath
 
-
-        val imagePath = appViewModel.data.value?.imagePath
         val thumbnailImage = BitmapFactory.decodeFile(imagePath)
         if (thumbnailImage != null) {
             mIvThumbnail!!.setImageBitmap(thumbnailImage)
         }
-        homeNameTV!!.text = ("Welcome " + appViewModel.data.value!!.fullName)
+        homeNameTV!!.text = ("Welcome " + u?.fullName)
 
         //spinner
         homeActivitySpinner = findViewById<View>(R.id.activity_spinner) as Spinner
@@ -118,6 +125,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             }
         }
     }
+
     // Companion object to allow for unit testing
     companion object {
         /**
@@ -156,7 +164,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     }
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
         val newLvl = homeActivitySpinner!!.selectedItemPosition
-        userData = UserData( appViewModel.data.value?.fullName, appViewModel.data.value?.height, appViewModel.data.value?.weight, appViewModel.data.value?.age, newLvl, appViewModel.data.value?.country, appViewModel.data.value?.city, appViewModel.data.value?.sex, appViewModel.data.value?.imagePath)
+        userData = UserData( userData?.fullName, userData?.height, userData?.weight, userData?.age, newLvl, userData?.country, userData?.city, userData?.sex, userData?.imagePath)
 
         updateBMR(userData)
     }

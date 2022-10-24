@@ -19,6 +19,12 @@ import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.test.core.app.ActivityScenario.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Activity that accepts or updates user information
@@ -50,7 +56,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     private var city: String? = null
     private var activityLvl: Int? = null
     private var sex: String? = null
-    private var receivedIntent: Intent? = null
     private var imagePath: String? = null
     private var userData: UserData? = null
 
@@ -80,9 +85,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     @RequiresApi(33)
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         // get various elements from layout
         mIvThumbnail = findViewById<View>(R.id.profile_pic) as ImageView
         mainEtName = findViewById<View>(R.id.full_name) as EditText
@@ -117,27 +122,39 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
 
         //Create the intent but don't start the activity yet
         mDisplayIntent = Intent(this, HomeActivity::class.java)
+        lifecycleScope.launch {
+            //get user will happen first
+            val u = appViewModel.getUser()
+            userData = u
+            //once user has been retrieved from db and userData is init, then fill in ui components with data
+            fillData(userData)
+            }
+        }
 
-        // if intent contains a user object, fill in the text fields with user data.
-        appViewModel.data.value?.fullName?.let { Log.d("USER_DATA", it) }
-        if (appViewModel.data.value?.fullName != null) {
+    @RequiresApi(33)
+    private fun fillData(u: UserData?) {
+        // if a user exists, fill in the text fields with user data.
+        if (u?.fullName != null ) {
+            if (u?.fullName.toString() == "test"){
+                return
+            }
             mainButtonSubmit!!.text = "Update"
-            mainEtName!!.setText(appViewModel.data.value!!.fullName)
-            ageSpinner!!.setSelection(appViewModel.data.value!!.age!!)
-            weightSpinner!!.setSelection(appViewModel.data.value!!.weight!!)
-            heightSpinner!!.setSelection(appViewModel.data.value!!.height!!)
-            mainEtCity?.setText(appViewModel.data.value!!.city)
-            mainEtCountry?.setText(appViewModel.data.value!!.country)
-            Log.d("SEX", appViewModel.data.value!!.sex.toString())
-            if (appViewModel.data.value!!.sex == "Male") {
+            mainEtName!!.setText(u.fullName)
+            ageSpinner!!.setSelection(u.age!!)
+            weightSpinner!!.setSelection(u.weight!!)
+            heightSpinner!!.setSelection(u.height!!)
+            mainEtCity?.setText(u.city)
+            mainEtCountry?.setText(u.country)
+            Log.d("SEX", u.sex.toString())
+            if (u.sex == "Male") {
                 Log.d("SEX", "MALE")
                 mainRgSex?.check(R.id.radioButton)
-            } else if (appViewModel.data.value!!.sex == "Female") {
+            } else if (u.sex == "Female") {
                 Log.d("SEX", "FEMALE")
                 mainRgSex?.check(R.id.radioButton2)
             }
-            mainActivitySpinner!!.setSelection(appViewModel.data.value!!.activityLvl!!)
-            imagePath = appViewModel.data.value?.imagePath
+            mainActivitySpinner!!.setSelection(u.activityLvl!!)
+            imagePath = u.imagePath
             val thumbnailImage = BitmapFactory.decodeFile(imagePath)
             if (thumbnailImage != null) {
                 mIvThumbnail!!.setImageBitmap(thumbnailImage)

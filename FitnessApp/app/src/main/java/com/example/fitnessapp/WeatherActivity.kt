@@ -8,10 +8,12 @@ import android.view.View
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.lifecycleScope
 import com.example.fitnessapp.NetworkUtilities.buildURLFromString
 import com.example.fitnessapp.NetworkUtilities.getDataFromURL
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.Gson
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 /**
@@ -33,6 +35,8 @@ class WeatherActivity : AppCompatActivity() {
     var humidityView: TextView? = null
     var emojiView: TextView? = null
 
+    private lateinit var userData: UserData
+
     /**
      * Function run on creation of the activity
      */
@@ -47,10 +51,23 @@ class WeatherActivity : AppCompatActivity() {
         val appViewModel: AppViewModel by viewModels {
             AppViewModelFactory((application as FitnessApplication).repository)
         }
+
+        lifecycleScope.launch {
+            //get user will happen first
+            val u = appViewModel.getUser()
+            if (u != null) {
+                userData = u
+            }
+            fillData(userData)
+        }
+
+    }
+
+    private fun fillData(u: UserData) {
+
         // this can access anything on the userdata
-        val userCountry = appViewModel.data.value?.country
-        val userCity = appViewModel.data.value?.city
-        Log.d("------------", userCountry.toString())
+        val userCountry = u.country
+        val userCity = u.city
 
 
         // get all text views to be populated
@@ -120,29 +137,12 @@ class WeatherActivity : AppCompatActivity() {
         }.start()
 
         // Bottom Navigation listener and intents
-//        var user = receivedIntent.extras?.getSerializable("user") as UserData
-        val imagePath = receivedIntent.getStringExtra("imagePath")
-
         bottomNav = findViewById(R.id.bottomNav)
         bottomNav.selectedItemId = R.id.bottomNav
 
         homeIntent = Intent(this, HomeActivity::class.java)
-//        homeIntent!!.putExtra("user", user)
-        homeIntent!!.putExtra("imagePath", imagePath)
-        homeIntent!!.putExtra("the_city", userCity)
-        homeIntent!!.putExtra("the_country", userCountry)
-
         hikeIntent = Intent(this, HikesActivity::class.java)
-//        hikeIntent!!.putExtra("user", user)
-        hikeIntent!!.putExtra("imagePath", imagePath)
-        hikeIntent!!.putExtra("the_city", userCity)
-        hikeIntent!!.putExtra("the_country", userCountry)
-
         mainIntent = Intent(this, MainActivity::class.java)
-//        mainIntent!!.putExtra("user", user)
-        mainIntent!!.putExtra("imagePath", imagePath)
-        mainIntent!!.putExtra("the_city", userCity)
-        mainIntent!!.putExtra("the_country", userCountry)
 
         bottomNav.setOnItemSelectedListener {
             Log.d("it.itemId: ", it.itemId.toString())
