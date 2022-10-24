@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     private var sex: String? = null
     private var receivedIntent: Intent? = null
     private var imagePath: String? = null
-    private var userData: UserData? = null
+    private lateinit var userData: UserData
 
     var mIvThumbnail: ImageView? = null
 
@@ -117,33 +117,28 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
 
         //Create the intent but don't start the activity yet
         mDisplayIntent = Intent(this, HomeActivity::class.java)
-
-        Log.d("BEFORE_IF", appViewModel.data.value?.fullName.toString())
-        var users = appViewModel.getUser()
-        Log.d("USER_DB", users?.fullName.toString())
+         userData = appViewModel.getUser()!!
+        Log.d("USER_DB", userData?.fullName.toString())
 
 
-        if(appViewModel.getUser() != null)
         // if a user exists, fill in the text fields with user data.
-        appViewModel.data.value?.fullName?.let { Log.d("USER_DATA", it) }
-        if (appViewModel.data.value?.fullName != null || users != null ) {
+        if (userData.fullName != null ) {
             mainButtonSubmit!!.text = "Update"
-            mainEtName!!.setText(appViewModel.data.value!!.fullName)
-            ageSpinner!!.setSelection(appViewModel.data.value!!.age!!)
-            weightSpinner!!.setSelection(appViewModel.data.value!!.weight!!)
-            heightSpinner!!.setSelection(appViewModel.data.value!!.height!!)
-            mainEtCity?.setText(appViewModel.data.value!!.city)
-            mainEtCountry?.setText(appViewModel.data.value!!.country)
-            Log.d("SEX", appViewModel.data.value!!.sex.toString())
-            if (appViewModel.data.value!!.sex == "Male") {
+            mainEtName!!.setText(userData.fullName)
+            ageSpinner!!.setSelection(userData.age!!)
+            weightSpinner!!.setSelection(userData.weight!!)
+            heightSpinner!!.setSelection(userData.height!!)
+            mainEtCity?.setText(userData.city)
+            mainEtCountry?.setText(userData.country)
+            Log.d("SEX", userData.sex.toString())
+            if (userData.sex == "Male") {
                 Log.d("SEX", "MALE")
                 mainRgSex?.check(R.id.radioButton)
-            } else if (appViewModel.data.value!!.sex == "Female") {
+            } else if (userData.sex == "Female") {
                 Log.d("SEX", "FEMALE")
                 mainRgSex?.check(R.id.radioButton2)
             }
-            mainActivitySpinner!!.setSelection(appViewModel.data.value!!.activityLvl!!)
-            imagePath = appViewModel.data.value?.imagePath
+            mainActivitySpinner!!.setSelection(userData.activityLvl!!)
             val thumbnailImage = BitmapFactory.decodeFile(imagePath)
             if (thumbnailImage != null) {
                 mIvThumbnail!!.setImageBitmap(thumbnailImage)
