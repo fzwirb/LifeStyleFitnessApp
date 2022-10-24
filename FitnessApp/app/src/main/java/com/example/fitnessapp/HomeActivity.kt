@@ -55,8 +55,10 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         val receivedIntent = intent
 
         lifecycleScope.launch {
+            //get user will happen first
             val u = appViewModel.getUser()
             userData = u
+            //once user has been retrieved from db and userData is init, then fill in ui components with data
             fillData(userData)
         }
     }
