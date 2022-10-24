@@ -1,5 +1,6 @@
 package com.example.fitnessapp
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.annotation.WorkerThread
 import kotlinx.coroutines.CoroutineScope
@@ -19,6 +20,7 @@ class AppRepository private constructor(userDao : UserDataDao) {
     // insert the data into the database using the Dao
     @WorkerThread
     suspend fun insert(userData: UserData) {
+        Log.d("TEST_DATABASE", "INSERT USER DATA")
         mUserDataDao.insert(userData)
     }
 
@@ -28,6 +30,17 @@ class AppRepository private constructor(userDao : UserDataDao) {
             data.postValue(user)
             insert(user)
         }
+    }
+
+    fun getUserData(): UserData? {
+        var user: UserData? = null
+        mScope.launch(Dispatchers.IO) {
+             user = mUserDataDao.readFromDB()
+//            setUserData(user)
+
+        }
+        return user
+
     }
 
     companion object {

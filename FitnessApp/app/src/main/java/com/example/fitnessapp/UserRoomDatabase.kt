@@ -1,6 +1,7 @@
 package com.example.fitnessapp
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import kotlin.jvm.Volatile
@@ -45,6 +46,7 @@ abstract class UserRoomDatabase : RoomDatabase() {
                 super.onCreate(db)
                 mInstance?.let { database ->
                     scope.launch(Dispatchers.IO){
+                        Log.d("TEST_DATABASE", "POPULATE DB TASK")
                         populateDbTask(database.userDataDao())
                     }
                 }

@@ -80,9 +80,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     @RequiresApi(33)
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         // get various elements from layout
         mIvThumbnail = findViewById<View>(R.id.profile_pic) as ImageView
         mainEtName = findViewById<View>(R.id.full_name) as EditText
@@ -118,9 +118,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         //Create the intent but don't start the activity yet
         mDisplayIntent = Intent(this, HomeActivity::class.java)
 
-        // if intent contains a user object, fill in the text fields with user data.
+        Log.d("BEFORE_IF", appViewModel.data.value?.fullName.toString())
+        var users = appViewModel.getUser()
+        Log.d("USER_DB", users?.fullName.toString())
+
+
+        if(appViewModel.getUser() != null)
+        // if a user exists, fill in the text fields with user data.
         appViewModel.data.value?.fullName?.let { Log.d("USER_DATA", it) }
-        if (appViewModel.data.value?.fullName != null) {
+        if (appViewModel.data.value?.fullName != null || users != null ) {
             mainButtonSubmit!!.text = "Update"
             mainEtName!!.setText(appViewModel.data.value!!.fullName)
             ageSpinner!!.setSelection(appViewModel.data.value!!.age!!)
