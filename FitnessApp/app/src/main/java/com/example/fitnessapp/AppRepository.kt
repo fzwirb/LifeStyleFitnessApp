@@ -32,17 +32,14 @@ class AppRepository private constructor(userDao : UserDataDao) {
         }
     }
 
-    fun getUserData(): UserData? {
+    suspend fun getUserData(): UserData? {
         var user: UserData? = null
-        mScope.launch(Dispatchers.IO) {
-             user = mUserDataDao.readFromDB()
-//            setUserData(user)
+        user = mUserDataDao.readFromDB()
 
-        }
+
         return user
 
     }
-
     companion object {
         private var mInstance: AppRepository? = null
         private lateinit var mScope: CoroutineScope

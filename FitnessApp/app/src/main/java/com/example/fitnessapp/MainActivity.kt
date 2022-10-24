@@ -19,6 +19,12 @@ import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.test.core.app.ActivityScenario.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Activity that accepts or updates user information
@@ -52,7 +58,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     private var sex: String? = null
     private var receivedIntent: Intent? = null
     private var imagePath: String? = null
-    private lateinit var userData: UserData
+    private var userData: UserData? = null
 
     var mIvThumbnail: ImageView? = null
 
@@ -117,28 +123,45 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
 
         //Create the intent but don't start the activity yet
         mDisplayIntent = Intent(this, HomeActivity::class.java)
-         userData = appViewModel.getUser()!!
-        Log.d("USER_DB", userData?.fullName.toString())
+//        lifecycleScope.launch {
+//            delay(5000L)
+//            userData = appViewModel.getUser()!!
+//            finish()
+//        }
+        lifecycleScope.launch {
+            val u = appViewModel.getUser()
+            userData = u
+            fillData(userData)
+            }
+        }
 
 
+
+//        Log.d("USER_DB", userData.fullName.toString())
+
+
+
+    @RequiresApi(33)
+    private fun fillData(u: UserData?) {
         // if a user exists, fill in the text fields with user data.
-        if (userData.fullName != null ) {
+        if (u?.fullName != null ) {
             mainButtonSubmit!!.text = "Update"
-            mainEtName!!.setText(userData.fullName)
-            ageSpinner!!.setSelection(userData.age!!)
-            weightSpinner!!.setSelection(userData.weight!!)
-            heightSpinner!!.setSelection(userData.height!!)
-            mainEtCity?.setText(userData.city)
-            mainEtCountry?.setText(userData.country)
-            Log.d("SEX", userData.sex.toString())
-            if (userData.sex == "Male") {
+            mainEtName!!.setText(u?.fullName)
+            ageSpinner!!.setSelection(u?.age!!)
+            weightSpinner!!.setSelection(u?.weight!!)
+            heightSpinner!!.setSelection(u?.height!!)
+            mainEtCity?.setText(u?.city)
+            mainEtCountry?.setText(u?.country)
+            Log.d("SEX", u?.sex.toString())
+            if (u?.sex == "Male") {
                 Log.d("SEX", "MALE")
                 mainRgSex?.check(R.id.radioButton)
-            } else if (userData.sex == "Female") {
+            } else if (u?.sex == "Female") {
                 Log.d("SEX", "FEMALE")
                 mainRgSex?.check(R.id.radioButton2)
             }
-            mainActivitySpinner!!.setSelection(userData.activityLvl!!)
+            mainActivitySpinner!!.setSelection(u?.activityLvl!!)
+            imagePath = u.imagePath
             val thumbnailImage = BitmapFactory.decodeFile(imagePath)
             if (thumbnailImage != null) {
                 mIvThumbnail!!.setImageBitmap(thumbnailImage)

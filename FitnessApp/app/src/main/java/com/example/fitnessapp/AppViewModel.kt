@@ -20,7 +20,7 @@ class AppViewModel(repository: AppRepository) : ViewModel() {
             appRepository.setUserData(user)
         }
     }
-    fun getUser(): UserData? {
+    suspend fun getUser(): UserData? {
         var u = appRepository.getUserData()
         return u
     }
