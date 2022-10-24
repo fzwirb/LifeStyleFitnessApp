@@ -56,7 +56,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
     private var city: String? = null
     private var activityLvl: Int? = null
     private var sex: String? = null
-    private var receivedIntent: Intent? = null
     private var imagePath: String? = null
     private var userData: UserData? = null
 
@@ -123,11 +122,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
 
         //Create the intent but don't start the activity yet
         mDisplayIntent = Intent(this, HomeActivity::class.java)
-//        lifecycleScope.launch {
-//            delay(5000L)
-//            userData = appViewModel.getUser()!!
-//            finish()
-//        }
         lifecycleScope.launch {
             //get user will happen first
             val u = appViewModel.getUser()
@@ -137,32 +131,29 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
             }
         }
 
-
-
-//        Log.d("USER_DB", userData.fullName.toString())
-
-
-
     @RequiresApi(33)
     private fun fillData(u: UserData?) {
         // if a user exists, fill in the text fields with user data.
         if (u?.fullName != null ) {
+            if (u?.fullName.toString() == "test"){
+                return
+            }
             mainButtonSubmit!!.text = "Update"
-            mainEtName!!.setText(u?.fullName)
-            ageSpinner!!.setSelection(u?.age!!)
-            weightSpinner!!.setSelection(u?.weight!!)
-            heightSpinner!!.setSelection(u?.height!!)
-            mainEtCity?.setText(u?.city)
-            mainEtCountry?.setText(u?.country)
-            Log.d("SEX", u?.sex.toString())
-            if (u?.sex == "Male") {
+            mainEtName!!.setText(u.fullName)
+            ageSpinner!!.setSelection(u.age!!)
+            weightSpinner!!.setSelection(u.weight!!)
+            heightSpinner!!.setSelection(u.height!!)
+            mainEtCity?.setText(u.city)
+            mainEtCountry?.setText(u.country)
+            Log.d("SEX", u.sex.toString())
+            if (u.sex == "Male") {
                 Log.d("SEX", "MALE")
                 mainRgSex?.check(R.id.radioButton)
-            } else if (u?.sex == "Female") {
+            } else if (u.sex == "Female") {
                 Log.d("SEX", "FEMALE")
                 mainRgSex?.check(R.id.radioButton2)
             }
-            mainActivitySpinner!!.setSelection(u?.activityLvl!!)
+            mainActivitySpinner!!.setSelection(u.activityLvl!!)
             imagePath = u.imagePath
             val thumbnailImage = BitmapFactory.decodeFile(imagePath)
             if (thumbnailImage != null) {

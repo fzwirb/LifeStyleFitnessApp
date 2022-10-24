@@ -8,7 +8,9 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.launch
 
 /**
  * Activity that allows the user to search for hikes nearby them in the Google Maps app
@@ -25,6 +27,8 @@ class HikesActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var userCountry: String
     private lateinit var appViewModel: AppViewModel
 
+    private lateinit var userData: UserData
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_hikes)
@@ -32,15 +36,20 @@ class HikesActivity : AppCompatActivity(), View.OnClickListener {
             AppViewModelFactory((application as FitnessApplication).repository)
         }
         appViewModel = appView
+        lifecycleScope.launch {
+            //get user will happen first
+            val u = appViewModel.getUser()
+            if (u != null) {
+                userData = u
+            }
+            setLocation(userData)
+        }
 
         //Get the button and set listener to this
         mButtonSubmit = findViewById<View>(R.id.launch_hikes_button) as Button
         mButtonSubmit!!.setOnClickListener(this)
 
         // bottom nav
-        userCity = appViewModel.data.value?.city.toString()
-        userCountry = appViewModel.data.value?.country.toString()
-
         bottomNav = findViewById(R.id.bottomNav)
         bottomNav.selectedItemId = R.id.bottomNav
 
@@ -86,5 +95,9 @@ class HikesActivity : AppCompatActivity(), View.OnClickListener {
                 startActivity(mapIntent)
             }
         }
+    }
+    private fun setLocation(u: UserData){
+        userCity = u.city.toString()
+        userCountry = u.country.toString()
     }
 }

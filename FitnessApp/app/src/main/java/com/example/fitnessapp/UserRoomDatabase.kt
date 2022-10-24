@@ -47,7 +47,7 @@ abstract class UserRoomDatabase : RoomDatabase() {
                 mInstance?.let { database ->
                     scope.launch(Dispatchers.IO){
                         Log.d("TEST_DATABASE", "POPULATE DB TASK")
-                        populateDbTask(database.userDataDao())
+//                        populateDbTask(database.userDataDao())
                     }
                 }
             }
@@ -55,7 +55,6 @@ abstract class UserRoomDatabase : RoomDatabase() {
 
         suspend fun populateDbTask (userDataDao: UserDataDao) {
             userDataDao.insert(UserData("test", 72, 190, 24, 0, "US", "Salt Lake City", "Male","test/path"))
-
         }
     }
 }
