@@ -161,7 +161,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     //steps
     private val mListener: SensorEventListener = object : SensorEventListener {
         override fun onSensorChanged(sensorEvent: SensorEvent) {
-            mTvData.text = "${sensorEvent.values[0]}"
+            mTvData.text = "${sensorEvent.values[0] - 54080}"
         }
 
         override fun onAccuracyChanged(sensor: Sensor, i: Int) {}
@@ -197,11 +197,6 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                 mStepCounter = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
                 registerListener()
             } else {
-                // Explain to the user that the feature is unavailable because the
-                // features requires a permission that the user has denied. At the
-                // same time, respect the user's decision. Don't link to system
-                // settings in an effort to convince the user to change their
-                // decision.
                 mTvData.text = "UH OH, COULDN'T GET PERMISSION FOR THE STEP COUNTER!"
             }
         }
