@@ -41,6 +41,9 @@ android {
 
 dependencies {
 
+    implementation 'com.amplifyframework:aws-storage-s3:1.37.5'
+    implementation 'com.amplifyframework:aws-auth-cognito:1.37.5'
+
     implementation("androidx.room:room-runtime:2.4.3")
     annotationProcessor("androidx.room:room-compiler:2.4.3")
 
