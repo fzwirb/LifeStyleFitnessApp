@@ -1,14 +1,22 @@
 package com.example.fitnessapp
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import kotlin.math.roundToInt
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -32,6 +40,11 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private var mainIntent: Intent? = null
     lateinit var bottomNav : BottomNavigationView
 
+    //step
+    private lateinit var mSensorManager: SensorManager
+    private lateinit var mTvData: TextView
+    private var mStepCounter: Sensor? = null
+
     //spinner
     private var homeActivitySpinner: Spinner? = null
     private var act_vals = arrayOf<String>("Sedentary", "Lightly active", "Moderately active", "Very active", "Extra active")
@@ -45,6 +58,25 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             AppViewModelFactory((application as FitnessApplication).repository)
         }
         appViewModel = appView
+
+        //steps
+        mTvData = findViewById(R.id.step_view)
+        mSensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
+
+        when {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACTIVITY_RECOGNITION
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                mStepCounter = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+            }
+            else -> {
+                // You can directly ask for the permission.
+                // The registered ActivityResultCallback gets the result of this request.
+                requestPermissionLauncher.launch(
+                    Manifest.permission.ACTIVITY_RECOGNITION)
+            }
+        }
 
         //Get the image view
         mIvThumbnail = findViewById<View>(R.id.profile_pic) as ImageView
@@ -125,6 +157,55 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             }
         }
     }
+
+    //steps
+    private val mListener: SensorEventListener = object : SensorEventListener {
+        override fun onSensorChanged(sensorEvent: SensorEvent) {
+            mTvData.text = "${sensorEvent.values[0]}"
+        }
+
+        override fun onAccuracyChanged(sensor: Sensor, i: Int) {}
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(mStepCounter != null){
+            registerListener()
+        }
+    }
+
+    private fun registerListener() {
+        mSensorManager.registerListener(
+            mListener,
+            mStepCounter,
+            SensorManager.SENSOR_DELAY_NORMAL
+        )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if(mStepCounter != null) {
+            mSensorManager.unregisterListener(mListener)
+        }
+    }
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                mStepCounter = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+                registerListener()
+            } else {
+                // Explain to the user that the feature is unavailable because the
+                // features requires a permission that the user has denied. At the
+                // same time, respect the user's decision. Don't link to system
+                // settings in an effort to convince the user to change their
+                // decision.
+                mTvData.text = "UH OH, COULDN'T GET PERMISSION FOR THE STEP COUNTER!"
+            }
+        }
+
 
     // Companion object to allow for unit testing
     companion object {
