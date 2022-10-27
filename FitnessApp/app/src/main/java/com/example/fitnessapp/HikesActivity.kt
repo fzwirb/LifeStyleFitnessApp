@@ -28,12 +28,12 @@ class HikesActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var mAccelerometer: Sensor
     private val mThreshold = -1.5
 
-    private val maxHistory = 5
+    private val maxHistory = 8
     private var startIndex = 0
     private val measurements: ArrayList<Vec3>  = ArrayList()
 
     private var lastShake = currentTimeMillis()
-    private var cooldown = 1000; //wait 1S between shakes
+    private var cooldown = 2000; //wait 1S between shakes
 
     class Vec3(data: FloatArray){
         val x = data[0]
