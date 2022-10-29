@@ -1,6 +1,6 @@
 export type AmplifyDependentResourcesAttributes = {
     "auth": {
-        "fitnessapp2355ece1": {
+        "fitnessddbb67be": {
             "IdentityPoolId": "string",
             "IdentityPoolName": "string",
             "UserPoolId": "string",
@@ -11,7 +11,7 @@ export type AmplifyDependentResourcesAttributes = {
         }
     },
     "storage": {
-        "fitnessapp": {
+        "fitnessS3": {
             "BucketName": "string",
             "Region": "string"
         }

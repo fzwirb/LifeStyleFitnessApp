@@ -1,5 +1,6 @@
 package com.example.fitnessapp
 
+import android.R.attr
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
@@ -21,10 +22,25 @@ import java.util.*
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.test.core.app.ActivityScenario.launch
+import com.amplifyframework.AmplifyException
+import com.amplifyframework.auth.AuthException
+import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
+import com.amplifyframework.auth.result.AuthSignInResult
+import com.amplifyframework.core.Amplify
+import com.amplifyframework.core.AmplifyConfiguration
+import com.amplifyframework.storage.StorageException
+import com.amplifyframework.storage.result.StorageUploadFileResult
+import com.amplifyframework.storage.s3.AWSS3StoragePlugin
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.BufferedWriter
+import java.io.FileWriter
+import android.R.attr.data
+import android.net.Uri
+import androidx.room.Database
+
 
 /**
  * Activity that accepts or updates user information
@@ -120,8 +136,25 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         mainButtonSubmit!!.setOnClickListener(this)
         mainButtonCamera!!.setOnClickListener(this)
 
+
         //Create the intent but don't start the activity yet
         mDisplayIntent = Intent(this, HomeActivity::class.java)
+
+        //AWS s3 STUFF
+
+        try {
+            Amplify.addPlugin(AWSCognitoAuthPlugin())
+            Amplify.addPlugin(AWSS3StoragePlugin())
+            Amplify.configure(applicationContext)
+            Log.i("Amplify","Initialized Amplify")
+            Amplify.Auth.signInWithWebUI(
+                this,
+                {result: AuthSignInResult -> Log.i("AuthQuickStart", result.toString())},
+                {error: AuthException -> Log.e("AuthError", error.toString())}
+            )
+        } catch (error: AmplifyException){
+            Log.e("Amplify", "Could not init Amplify", error)
+        }
         lifecycleScope.launch {
             //get user will happen first
             val u = appViewModel.getUser()
@@ -268,7 +301,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
                         //send data to the new home activity
                         userData = UserData( fullName, height, weight, age, activityLvl, country, city, sex, imagePath)
                         appViewModel.setUser(userData)
+                        uploadFile()
                         startActivity(mDisplayIntent)
+
                     }
                     else{
                         return
@@ -285,6 +320,37 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
                 }
             }
         }
+    }
+
+    private fun uploadFile() {
+//        val stream = contentResolver.openInputStream(uri)
+//        val uri: Uri = data.getData()
+//        val file: File = File(uri.getPath()) //create path from uri
+//
+//        val split = file.path.split(":".toRegex()).toTypedArray() //split the path.
+//
+//        val filePath = split[1] //assign it to a string(your choice).
+
+
+        val roomDB = File(applicationContext.filesDir, "application.db")
+
+        Amplify.Storage.uploadFile(
+            "FitnessKey",
+            roomDB,
+            { result: StorageUploadFileResult ->
+                Log.i(
+                    "MyAmplifyApp",
+                    "Successfully uploaded: " + result.key
+                )
+            },
+            { storageFailure: StorageException? ->
+                Log.e(
+                    "MyAmplifyApp",
+                    "Upload failed",
+                    storageFailure
+                )
+            }
+        )
     }
 
     /**

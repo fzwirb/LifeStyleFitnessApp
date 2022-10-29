@@ -1,7 +1,7 @@
 {
-  "resourceName": "fitnessapp",
-  "policyUUID": "f5ba868f",
-  "bucketName": "fitnessappb1be57f7f01640de9af0bd165201c986",
+  "resourceName": "fitnessS3",
+  "policyUUID": "82c14717",
+  "bucketName": "fitnessbucket",
   "storageAccess": "authAndGuest",
   "guestAccess": [
     "CREATE_AND_UPDATE",
