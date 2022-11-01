@@ -38,6 +38,7 @@ import kotlinx.coroutines.withContext
 import java.io.BufferedWriter
 import java.io.FileWriter
 import android.R.attr.data
+import android.content.Context
 import android.net.Uri
 import androidx.room.Database
 
@@ -301,7 +302,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
                         //send data to the new home activity
                         userData = UserData( fullName, height, weight, age, activityLvl, country, city, sex, imagePath)
                         appViewModel.setUser(userData)
-                        uploadFile()
+                        uploadFile("application.db")
+                        uploadFile("application.db-shm")
+                        uploadFile("application.db-wal")
                         startActivity(mDisplayIntent)
 
                     }
@@ -322,20 +325,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         }
     }
 
-    private fun uploadFile() {
-//        val stream = contentResolver.openInputStream(uri)
-//        val uri: Uri = data.getData()
-//        val file: File = File(uri.getPath()) //create path from uri
-//
-//        val split = file.path.split(":".toRegex()).toTypedArray() //split the path.
-//
-//        val filePath = split[1] //assign it to a string(your choice).
+    private fun uploadFile(filename: String?) {
 
-
-        val roomDB = File(applicationContext.filesDir, "application.db")
-
+        val authUser = Amplify.Auth.currentUser.userId
+        val roomDB = File(this.getDatabasePath(filename).absolutePath)
+        Log.d("MyAmplifyApp", roomDB.toString())
         Amplify.Storage.uploadFile(
-            "FitnessKey",
+            authUser + filename,
             roomDB,
             { result: StorageUploadFileResult ->
                 Log.i(

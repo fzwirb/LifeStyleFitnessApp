@@ -1,10 +1,10 @@
 {
   "version": "1",
   "cognitoConfig": {
-    "identityPoolName": "fitnessddbb67be_identitypool_ddbb67be",
-    "allowUnauthenticatedIdentities": true,
-    "resourceNameTruncated": "fitnesddbb67be",
-    "userPoolName": "fitnessddbb67be_userpool_ddbb67be",
+    "identityPoolName": "fitnessapp1b391d81_identitypool_1b391d81",
+    "allowUnauthenticatedIdentities": false,
+    "resourceNameTruncated": "fitnes1b391d81",
+    "userPoolName": "fitnessapp1b391d81_userpool_1b391d81",
     "autoVerifiedAttributes": [
       "email"
     ],
@@ -31,12 +31,12 @@
     "userpoolClientReadAttributes": [
       "email"
     ],
-    "userpoolClientLambdaRole": "fitnesddbb67be_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "fitnes1b391d81_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "ddbb67be",
-    "resourceName": "fitnessddbb67be",
+    "sharedId": "1b391d81",
+    "resourceName": "fitnessapp1b391d81",
     "authSelections": "identityPoolAndUserPool",
-    "useDefault": "default",
+    "useDefault": "defaultSocial",
     "userPoolGroupList": [],
     "serviceName": "Cognito",
     "usernameCaseSensitive": false,
@@ -54,6 +54,12 @@
       ]
     },
     "breakCircularDependency": true,
-    "dependsOn": []
+    "dependsOn": [],
+    "hostedUI": true,
+    "hostedUIDomainName": "fitnessapp1e755442-1e755442",
+    "authProvidersUserPool": [],
+    "hostedUIProviderMeta": "[]",
+    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"myapp://callback/\"],\"LogoutURLs\":[\"myapp://signout/\"]}",
+    "authProviders": []
   }
 } 

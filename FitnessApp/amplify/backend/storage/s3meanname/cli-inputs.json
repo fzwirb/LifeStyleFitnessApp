@@ -1,6 +1,6 @@
 {
-  "resourceName": "fitnessS3",
-  "policyUUID": "82c14717",
+  "resourceName": "s3meanname",
+  "policyUUID": "24c1f4cb",
   "bucketName": "fitnessbucket",
   "storageAccess": "authAndGuest",
   "guestAccess": [

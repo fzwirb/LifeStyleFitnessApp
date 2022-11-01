@@ -1,6 +1,6 @@
 {
   "auth": {
-    "fitnessddbb67be": {
+    "fitnessapp1b391d81": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],
@@ -26,7 +26,7 @@
     }
   },
   "storage": {
-    "fitnessS3": {
+    "s3meanname": {
       "service": "S3",
       "providerPlugin": "awscloudformation",
       "dependsOn": []
