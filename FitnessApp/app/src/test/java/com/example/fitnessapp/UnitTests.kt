@@ -9,11 +9,11 @@ import org.junit.Assert.*
  */
 class UnitTests {
     // users for various activity levels
-    var user_act_level_0 = User("test", 72, 190, 24, 0, "US", "Salt Lake City", "Male")
-    var user_act_level_1 = User("test", 72, 190, 24, 1, "US", "Salt Lake City", "Male")
-    var user_act_level_2 = User("test", 72, 190, 24, 2, "US", "Salt Lake City", "Male")
-    var user_act_level_3 = User("test", 72, 190, 24, 3, "US", "Salt Lake City", "Male")
-    var user_act_level_4 = User("test", 72, 190, 24, 4, "US", "Salt Lake City", "Male")
+    var user_act_level_0 = UserData("test", 72, 190, 24, 0, "US", "Salt Lake City", "Male", "test/test")
+    var user_act_level_1 = UserData("test", 72, 190, 24, 1, "US", "Salt Lake City", "Male", "test/test")
+    var user_act_level_2 = UserData("test", 72, 190, 24, 2, "US", "Salt Lake City", "Male", "test/test")
+    var user_act_level_3 = UserData("test", 72, 190, 24, 3, "US", "Salt Lake City", "Male", "test/test")
+    var user_act_level_4 = UserData("test", 72, 190, 24, 4, "US", "Salt Lake City", "Male", "test/test")
 
     /**
      * Tests that the calculateKCAL function in HomeActivity calculates the correct number of KCAL for a given user with various activity levels.

@@ -44,7 +44,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var mSensorManager: SensorManager
     private lateinit var mTvData: TextView
     private var mStepCounter: Sensor? = null
-
+    private var newSteps = true
     //spinner
     private var homeActivitySpinner: Spinner? = null
     private var act_vals = arrayOf<String>("Sedentary", "Lightly active", "Moderately active", "Very active", "Extra active")
@@ -161,7 +161,13 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     //steps
     private val mListener: SensorEventListener = object : SensorEventListener {
         override fun onSensorChanged(sensorEvent: SensorEvent) {
-            mTvData.text = "${sensorEvent.values[0] - 54080}"
+            if (newSteps == true) {
+                sensorEvent.values[0] = 0.toFloat()
+            }
+            else {
+                mTvData.text = "${sensorEvent.values[0]}"
+            }
+            newSteps = false
         }
 
         override fun onAccuracyChanged(sensor: Sensor, i: Int) {}
