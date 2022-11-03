@@ -3,6 +3,10 @@ package com.example.fitnessapp
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -14,6 +18,7 @@ import com.example.fitnessapp.NetworkUtilities.getDataFromURL
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
+import java.util.ArrayList
 import kotlin.math.roundToInt
 
 /**
@@ -21,6 +26,24 @@ import kotlin.math.roundToInt
  */
 
 class WeatherActivity : AppCompatActivity() {
+    // shake code
+    private lateinit var mSensorManager: SensorManager
+    private lateinit var mAccelerometer: Sensor
+    private val mThreshold = -1.5
+
+    private val maxHistory = 8
+    private var startIndex = 0
+    private val measurements: ArrayList<Vec3> = ArrayList()
+
+    private var lastShake = System.currentTimeMillis()
+    private var cooldown = 2000; //wait 1S between shakes
+
+    class Vec3(data: FloatArray){
+        val x = data[0]
+        val y = data[1]
+        val z = data[2]
+    }
+
     lateinit var bottomNav : BottomNavigationView
     private var homeIntent: Intent? = null
     private var hikeIntent: Intent? = null
@@ -60,6 +83,12 @@ class WeatherActivity : AppCompatActivity() {
             }
             fillData(userData)
         }
+
+        // shaker
+        mSensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
+
+        //Get the virtual accelerometer with gravity subtracted out
+        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
 
     }
 
@@ -167,5 +196,64 @@ class WeatherActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    // shake code
+    private val mListener: SensorEventListener = object : SensorEventListener {
+        override fun onSensorChanged(sensorEvent: SensorEvent) {
+
+            //Get the accelerations
+            val v = WeatherActivity.Vec3(sensorEvent.values)
+            addToHistory(v)
+            val md = minDot(v)
+            Log.d("MINDOT", "$md, ${v.x} ${v.y} ${v.z}")
+            var now = System.currentTimeMillis()
+            if(now >= (lastShake + cooldown) && md < mThreshold) {
+                Log.d("shake_test", "success")
+                startActivity(homeIntent)
+
+                lastShake = now
+                clearHistory(); //make them shake again later
+            }
+        }
+
+        override fun onAccuracyChanged(sensor: Sensor, i: Int) {}
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mSensorManager.registerListener(
+            mListener,
+            mAccelerometer,
+            SensorManager.SENSOR_DELAY_NORMAL
+        )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mSensorManager.unregisterListener(mListener)
+    }
+
+    private fun dot(u : WeatherActivity.Vec3, v: WeatherActivity.Vec3): Float{
+        return u.x*v.x + u.y*v.y +u.z*v.z
+    }
+
+    //return the minimum dot product between this and any historical measurement
+    private fun minDot(v: WeatherActivity.Vec3): Float {
+        return measurements.map{ dot(it,v) }.min()
+    }
+
+    private fun addToHistory(v : WeatherActivity.Vec3){
+        if(measurements.size < maxHistory){
+            measurements.add(v);
+        } else {
+            measurements[startIndex] = v;
+            startIndex = (startIndex + 1) % maxHistory
+        }
+    }
+
+    private fun clearHistory(){
+        measurements.clear();
+        startIndex = 0;
     }
 }

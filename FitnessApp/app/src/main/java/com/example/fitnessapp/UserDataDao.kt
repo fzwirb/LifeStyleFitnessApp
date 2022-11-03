@@ -14,6 +14,9 @@ interface UserDataDao {
     @Query("DELETE FROM user_table")
     suspend fun deleteAll()
 
+    /**
+     * Retrieves the most recent user from the db
+     */
     @Query("SELECT * FROM user_table  ORDER BY id DESC LIMIT 1")
     suspend fun readFromDB(): UserData
 }
