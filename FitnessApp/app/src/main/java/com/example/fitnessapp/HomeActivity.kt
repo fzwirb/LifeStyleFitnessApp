@@ -8,19 +8,21 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import kotlin.math.roundToInt
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
+
 
 //https://stackoverflow.com/questions/50897540/how-do-i-implement-serializable-in-kotlin-so-it-also-works-in-java
 
@@ -40,10 +42,14 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private var mainIntent: Intent? = null
     lateinit var bottomNav : BottomNavigationView
 
+
     //step
     private lateinit var mSensorManager: SensorManager
     private lateinit var mTvData: TextView
     private var mStepCounter: Sensor? = null
+    private var newSteps = true
+    private var countingSteps = true
+    private var pausedSteps = 0
 
     //spinner
     private var homeActivitySpinner: Spinner? = null
@@ -161,7 +167,20 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     //steps
     private val mListener: SensorEventListener = object : SensorEventListener {
         override fun onSensorChanged(sensorEvent: SensorEvent) {
-            mTvData.text = "${sensorEvent.values[0] - 54080}"
+            //set step counter to 0 if first time using it
+            if ( newSteps ) {
+                sensorEvent.values[0] = 0.toFloat()
+            }
+            //if user has step tracking turned on or off
+            if ( countingSteps ) {
+                pausedSteps = sensorEvent.values[0].toInt()
+                mTvData.text = "${sensorEvent.values[0]}"
+            }
+            else {
+                mTvData.text = pausedSteps.toString()
+            }
+            //will no longer be first time using step counter
+            newSteps = false
         }
 
         override fun onAccuracyChanged(sensor: Sensor, i: Int) {}
@@ -188,6 +207,48 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             mSensorManager.unregisterListener(mListener)
         }
     }
+
+    // two-finger gestures modeled off of https://stackoverflow.com/questions/26215769/how-to-detect-a-two-finger-swipe-gesture-on-android
+    private val NONE = 0
+    private val SWIPE = 1
+    private var mode = NONE
+    private var startY = 0f
+    private var stopY = 0f
+
+    // We will only detect a swipe if the difference is at least 100 pixels
+    // Change this value to your needs
+    private val TRESHOLD = 100
+
+    override fun onTouchEvent(event: MotionEvent): Boolean  {
+        when (event.action and MotionEvent.ACTION_MASK) {
+
+            MotionEvent.ACTION_POINTER_DOWN -> {
+                // This happens when you touch the screen with two fingers
+                mode = SWIPE
+                // You can also use event.getY(1) or the average of the two
+                startY = event.getY(0)
+            }
+            MotionEvent.ACTION_POINTER_UP -> {
+                // This happens when you release the second finger
+                mode = NONE
+                if (Math.abs(startY - stopY) > TRESHOLD) {
+                    if (startY > stopY) {
+                        Toast.makeText(applicationContext, "Step counter running.", Toast.LENGTH_LONG).show()
+                        countingSteps = true
+                    } else {
+                        Toast.makeText(applicationContext, "Step counter stopped.", Toast.LENGTH_LONG).show()
+                        countingSteps = false
+                    }
+                }
+                mode = NONE
+            }
+            MotionEvent.ACTION_MOVE -> if (mode == SWIPE) {
+                stopY = event.getY(0)
+            }
+        }
+        return true
+    }
+
 
     private val requestPermissionLauncher =
         registerForActivityResult(
