@@ -127,6 +127,10 @@ class HikesActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
+
+    /**
+     * Sets member variables based on user's location
+     */
     private fun setLocation(u: UserData){
         userCity = u.city.toString()
         userCountry = u.country.toString()

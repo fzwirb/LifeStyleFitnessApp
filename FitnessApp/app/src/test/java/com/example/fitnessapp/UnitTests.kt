@@ -15,6 +15,7 @@ class UnitTests {
     var user_act_level_3 = UserData("test", 72, 190, 24, 3, "US", "Salt Lake City", "Male", "test/test")
     var user_act_level_4 = UserData("test", 72, 190, 24, 4, "US", "Salt Lake City", "Male", "test/test")
 
+
     /**
      * Tests that the calculateKCAL function in HomeActivity calculates the correct number of KCAL for a given user with various activity levels.
      */
@@ -53,6 +54,11 @@ class UnitTests {
         assertEquals(HomeActivity.calculateBMR(user_act_level_3).toString(), "1705.2266757369614")
         assertEquals(HomeActivity.calculateBMR(user_act_level_4).toString(), "1705.2266757369614")
 
-
+    }
+    /**
+     * Test that upload file returns true with a test.db file
+     */
+    @Test
+    fun uploadFileTest(){
     }
 }

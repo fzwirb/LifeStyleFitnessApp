@@ -95,6 +95,9 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         }
     }
 
+    /**
+     * Helper method to allow for an asynchronous call to the room db
+     */
     private fun fillData(u: UserData?) {
         val imagePath = u?.imagePath
 

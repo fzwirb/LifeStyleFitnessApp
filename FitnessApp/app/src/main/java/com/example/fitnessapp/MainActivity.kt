@@ -165,6 +165,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
             }
         }
 
+    /**
+     * If a user exists we fill the fields with their latest data
+     */
     @RequiresApi(33)
     private fun fillData(u: UserData?) {
         // if a user exists, fill in the text fields with user data.
@@ -325,29 +328,32 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnIt
         }
     }
 
+    /**
+     * Uploads db files to aws every time the user updates their data
+     */
     private fun uploadFile(filename: String?) {
 
-        val authUser = Amplify.Auth.currentUser.userId
-        val roomDB = File(this.getDatabasePath(filename).absolutePath)
-        Log.d("MyAmplifyApp", roomDB.toString())
-        Amplify.Storage.uploadFile(
-            authUser + filename,
-            roomDB,
-            { result: StorageUploadFileResult ->
-                Log.i(
-                    "MyAmplifyApp",
-                    "Successfully uploaded: " + result.key
-                )
-            },
-            { storageFailure: StorageException? ->
-                Log.e(
-                    "MyAmplifyApp",
-                    "Upload failed",
-                    storageFailure
-                )
-            }
-        )
-    }
+            val authUser = Amplify.Auth.currentUser.userId
+            val roomDB = File(this.getDatabasePath(filename).absolutePath)
+            Log.d("MyAmplifyApp", roomDB.toString())
+            Amplify.Storage.uploadFile(
+                authUser + filename,
+                roomDB,
+                { result: StorageUploadFileResult ->
+                    Log.i(
+                        "MyAmplifyApp",
+                        "Successfully uploaded: " + result.key
+                    )
+                },
+                { storageFailure: StorageException? ->
+                    Log.e(
+                        "MyAmplifyApp",
+                        "Upload failed",
+                        storageFailure
+                    )
+                }
+            )
+        }
 
     /**
      * Validates whether the user input is acceptable. Returns boolean
